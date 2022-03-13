@@ -8,23 +8,25 @@ TagManager:
   - Present
   - Future
   - Addition
+  - Item
+  - Slippery
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Item
+  - 
   - Water
   - UI
+  - 
+  - 
   - IgnorePlayer
   - Player
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Item_CurrentTL
+  - Item_EveryTL
+  - Item_OnlyCurrentTL
+  - Held_Item_CurrentTL
+  - Held_Item_EveryTL
+  - Held_Item_OnlyCurrentTL
   - 
   - 
   - 

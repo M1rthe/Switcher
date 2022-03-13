@@ -70,12 +70,26 @@ public class TimelineDisplayEditor : EditorWindow
     void Enable(GameObject gameObject, bool enable)
     {
         MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+        ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
+        Canvas[] canvasses = gameObject.GetComponentsInChildren<Canvas>();
 
         foreach (MeshRenderer meshRenderer in meshRenderers)
         {
             meshRenderer.enabled = enable;
+
             if (enable) meshRenderer.gameObject.layer = LayerMask.NameToLayer("Default");
             else meshRenderer.gameObject.layer = LayerMask.NameToLayer("IgnorePlayer");
+        }
+
+        foreach (ParticleSystem particleSystem in particleSystems)
+        {
+            if (enable) particleSystem.Play();
+            else particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
+        foreach (Canvas canvas in canvasses)
+        {
+            canvas.enabled = enable;
         }
     }
 

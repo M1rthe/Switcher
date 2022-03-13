@@ -9,13 +9,16 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Walk")]
     [SerializeField] float walkSpeed = 15f;
+    Vector3 move;
+    Vector3 lastMove;
 
     [Header("Sprint")]
     [SerializeField] KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] float sprintMultiplier = 2.1f;
 
     [Header("Jump")]
-    [SerializeField] float jumpforce = 2f;
+    [SerializeField] float jumpforce = 1.2f;
+    [SerializeField] float jumpHeighForce = 1.5f;
     [SerializeField] float gravity = -5f;
     float verticalSpeed;
 
@@ -29,8 +32,6 @@ public class PlayerMovement : MonoBehaviour
         //Get Stuff
         characterController = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
-
-        Cursor.lockState = CursorLockMode.Locked; // Cursor
     }
 
     void Update()
@@ -54,25 +55,37 @@ public class PlayerMovement : MonoBehaviour
 
     void Move()
     {
-        // Input
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        // X & Z
+        move = (transform.right * Input.GetAxis("Horizontal")) + (transform.up) + (transform.forward * Input.GetAxis("Vertical"));
 
         //Y
         if (characterController.isGrounded)
         {
-            verticalSpeed = -1;
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                verticalSpeed = jumpforce;
-            }
+            //Jumping
+            verticalSpeed = -1f;
+            if (Input.GetKeyDown(KeyCode.Space)) verticalSpeed = jumpforce;
         }
-        verticalSpeed += gravity * Time.deltaTime;
+        else
+        {
+            //Falling
+            verticalSpeed += gravity * Time.deltaTime;
+            move = lastMove;
+        }
 
         float sprint = Input.GetKey(sprintKey) ? sprintMultiplier : 1; // Sprint
 
-        // X & Y & Z
-        Vector3 move = (transform.right * x) + (transform.up * verticalSpeed) + (transform.forward * z);
+        move.y = verticalSpeed * jumpHeighForce;
         characterController.Move(move * walkSpeed * sprint * Time.deltaTime);
+        lastMove = move;
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (characterController.isGrounded || hit.normal.y > 0.1f) return;
+        if (!Input.GetKeyDown(KeyCode.Space)) return;
+        if (hit.transform.CompareTag("Slippery")) return;
+
+        move = hit.normal * 0.6f;
+        verticalSpeed = jumpforce * 1.5f;
     }
 }
