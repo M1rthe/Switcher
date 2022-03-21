@@ -72,6 +72,7 @@ public class TimelineDisplayEditor : EditorWindow
         MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
         ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
         Canvas[] canvasses = gameObject.GetComponentsInChildren<Canvas>();
+        Light[] lights = gameObject.GetComponentsInChildren<Light>();
 
         foreach (MeshRenderer meshRenderer in meshRenderers)
         {
@@ -90,6 +91,11 @@ public class TimelineDisplayEditor : EditorWindow
         foreach (Canvas canvas in canvasses)
         {
             canvas.enabled = enable;
+        }
+
+        foreach (Light light in lights)
+        {
+            light.enabled = enable;
         }
     }
 

@@ -1,10 +1,9 @@
 ﻿using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class Client : MonoBehaviourPunCallbacks
 {
+    public static Photon.Realtime.Player photonPlayer;
+
     public enum HostJoin { Host, Join, Undefined }
     public static HostJoin hostJoin = HostJoin.Undefined;
 

@@ -52,7 +52,7 @@ public class Timeline : MonoBehaviour
                     //if (enable) meshRenderer.gameObject.layer = defaultMask;
                     //else meshRenderer.gameObject.layer = item.itemHeldTypeLayer;
 
-                    if (item.inHand) Pickup.Drop();
+                    if (item.inHand) item.GetComponentInParent<Pickup>().Drop(Client.photonPlayer);
                 }
             }
             else

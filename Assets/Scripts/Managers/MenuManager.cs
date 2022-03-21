@@ -14,7 +14,7 @@ public class MenuManager : FullScreenManager
     void Start()
     {
         if (Time.frameCount < 10) GotoMainMenu();
-        else GotoLevelMenu();
+        else { GotoLevelMenu(); }
 
         Cursor.lockState = CursorLockMode.None;
     }
@@ -34,7 +34,7 @@ public class MenuManager : FullScreenManager
                 if (Client.hostJoin != Client.HostJoin.Undefined)
                 {
                     //Make every client go back
-                    photonView.RPC("GoBack", RpcTarget.AllBuffered, Client.hostJoin == Client.HostJoin.Host);
+                    photonView.RPC("GoBack", RpcTarget.All, Client.hostJoin == Client.HostJoin.Host);
                 }
             }
             else
@@ -48,21 +48,19 @@ public class MenuManager : FullScreenManager
     [PunRPC]
     public void GoBack(bool hostLeft)
     {
-        if (Client.hostJoin == Client.HostJoin.Host && hostLeft)
-        {
-            StartCoroutine("Wait4GoBack");
-            hostServer.LeaveRoom();
-        }
-        if (Client.hostJoin == Client.HostJoin.Join)
-        {
-            StartCoroutine("Wait4GoBack");
-            joinServer.LeaveRoom();
-        }
+        StartCoroutine("Wait4GoBack", hostLeft);
     }
 
-    IEnumerator Wait4GoBack()
+    IEnumerator Wait4GoBack(bool leave = true)
     {
-        while (Client.roomStatus != Client.RoomStatus.OutRoom)
+        Client.HostJoin hj = Client.hostJoin; //Because set to unidentified onLeft
+
+        if (leave && hj == Client.HostJoin.Host) { hostServer.LeaveRoom(); }
+        if (hj == Client.HostJoin.Join) { joinServer.LeaveRoom(); }
+
+        Debug.LogError("Go back");
+
+        while ((hj == Client.HostJoin.Host && leave && hj == Client.HostJoin.Join) && Client.roomStatus != Client.RoomStatus.OutRoom)
         {
             yield return null;
         }
@@ -70,9 +68,11 @@ public class MenuManager : FullScreenManager
         if (levelMenu.gameObject.activeSelf ||
         hostServer.gameObject.activeSelf ||
         joinServer.gameObject.activeSelf) 
-        { 
-            if (Client.hostJoin == Client.HostJoin.Host) GotoHostServer(); 
-            if (Client.hostJoin == Client.HostJoin.Join) GotoJoinServer(); 
+        {
+            Debug.LogError("Go REALLY back");
+
+            if (hj == Client.HostJoin.Host) { GotoHostServer(); }
+            if (hj == Client.HostJoin.Join) { GotoJoinServer(); }
         }
     }
 
@@ -114,8 +114,10 @@ public class MenuManager : FullScreenManager
     }
 
     [PunRPC]
-    public void GotoLevelMenu()
+    public void GotoLevelMenu(string test = "default")
     {
+        Debug.LogError(test.ToString() + " GotoLevelMenu");
+
         Cursor.lockState = CursorLockMode.None; //Cursor
         Cursor.visible = Client.hostJoin == Client.HostJoin.Host;
 

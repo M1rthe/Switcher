@@ -31,10 +31,7 @@ public class LevelUI : MonoBehaviour
 
         if (Client.hostJoin == Client.HostJoin.Host)
         {
-            if (photonView.IsMine)
-            {
-                photonView.RPC("Select", RpcTarget.OthersBuffered, select, transform.GetSiblingIndex());
-            }
+            photonView.RPC("Select", RpcTarget.OthersBuffered, select, transform.GetSiblingIndex());
         }
     }
 

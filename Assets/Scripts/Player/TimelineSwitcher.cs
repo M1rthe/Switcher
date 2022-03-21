@@ -80,6 +80,7 @@ public class TimelineSwitcher : MonoBehaviour
             }
         }
 
+        Debug.LogError("Set timeline: "+ TimelineManager.Timelines[TimelineManager.CurrentTimeline].name);
         HUD.CurrentTimeline.text = TimelineManager.Timelines[TimelineManager.CurrentTimeline].name;
     }
 

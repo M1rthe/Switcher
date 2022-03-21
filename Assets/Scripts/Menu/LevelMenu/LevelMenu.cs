@@ -88,10 +88,10 @@ public class LevelMenu : MonoBehaviour
     {
         Client.location = Client.Location.Game;
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
-
         Cursor.lockState = CursorLockMode.Locked; //Cursor
-        Cursor.visible = false;
+        Cursor.visible = false;        
+        
+        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
     }
 
     [PunRPC]

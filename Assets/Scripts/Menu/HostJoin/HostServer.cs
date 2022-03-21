@@ -42,6 +42,7 @@ public class HostServer : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2) { Debug.LogError("Enter room"); playButton.interactable = true; }
         playButtonText.text = "Play (" + PhotonNetwork.CurrentRoom.PlayerCount + "/2 players)";
     }
 
@@ -87,7 +88,7 @@ public class HostServer : MonoBehaviourPunCallbacks
             PhotonNetwork.NickName = roomName.text;
             string id = System.Guid.NewGuid().ToString("N");
             PhotonNetwork.CreateRoom(id, roomOptions);
-            Debug.LogError("ID: " + id);
+            //Debug.LogError("ID: " + id);
             GUIUtility.systemCopyBuffer = id;
         }
         else if (Client.roomStatus == Client.RoomStatus.InRoom) Debug.LogError("Already entered room");
@@ -96,8 +97,10 @@ public class HostServer : MonoBehaviourPunCallbacks
 
     public void Play()
     {
+        Debug.LogError("Play : GotoLevelMenu");
+
+        menuManager.photonView.RPC("GotoLevelMenu", RpcTarget.All, Client.hostJoin.ToString());
         Client.hostJoin = Client.HostJoin.Host;
-        menuManager.photonView.RPC("GotoLevelMenu", RpcTarget.AllBuffered);
     }
 
     IEnumerator Wait4OtherPlayers()
@@ -123,5 +126,6 @@ public class HostServer : MonoBehaviourPunCallbacks
     {
         Client.roomStatus = Client.RoomStatus.LeavingRoom;
         PhotonNetwork.LeaveRoom();
+        OnLeftRoom();
     }
 }

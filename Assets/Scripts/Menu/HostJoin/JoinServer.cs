@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class JoinServer : MonoBehaviourPunCallbacks
 {
@@ -31,6 +32,8 @@ public class JoinServer : MonoBehaviourPunCallbacks
 
         Client.roomStatus = Client.RoomStatus.OutRoom;
         Client.hostJoin = Client.HostJoin.Undefined;
+
+        Debug.LogError("Left room");
     }
 
     public void ClearError()
@@ -83,5 +86,6 @@ public class JoinServer : MonoBehaviourPunCallbacks
     {
         Client.roomStatus = Client.RoomStatus.LeavingRoom;
         PhotonNetwork.LeaveRoom();
+        //OnLeftRoom();
     }
 }

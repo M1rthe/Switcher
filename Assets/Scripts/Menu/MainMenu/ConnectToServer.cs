@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using UnityEngine;
 
 public class ConnectToServer : MonoBehaviourPunCallbacks
 {
@@ -16,5 +17,5 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     //Lobby
     public override void OnJoinedLobby() { Client.lobbyStatus = Client.LobbyStatus.InLobby; }
-    public override void OnLeftLobby() { Client.lobbyStatus = Client.LobbyStatus.OutLobby; }
+    public override void OnLeftLobby() { Client.lobbyStatus = Client.LobbyStatus.OutLobby; }    
 }
