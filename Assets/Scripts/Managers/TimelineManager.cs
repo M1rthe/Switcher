@@ -1,12 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
 {
     public static int CurrentTimeline = -1;
+    public static int CurrentTimelineOtherPlayer = -1;
     [SerializeField] Timeline[] timelines = new Timeline[3];
     public static Timeline[] Timelines = new Timeline[3];
+
+    public static PhotonView PhotonView;
+
+    void Awake()
+    {
+        PhotonView = GetComponent<PhotonView>();
+    }
 
     public static int TimelineAsInt(string timeline)
     {
@@ -21,15 +30,22 @@ public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
         return -1;
     }
 
-    public static void SetTimeline(int timeline, bool enable)
+    [PunRPC]
+    public void SendOtherPlayerYourCurrentTimeline(int timeline)
     {
-        if (enable)
-        {
-            CurrentTimeline = timeline;
-        }
+        Debug.LogError("Other player timeline: "+timeline);
+        CurrentTimelineOtherPlayer = timeline;
+    }
 
+    public static void SetTimeline(int timeline)
+    {
         //Enable current
-        Timelines[timeline].Enable(enable);
+        CurrentTimeline = timeline;
+        PhotonView.RPC("SendOtherPlayerYourCurrentTimeline", RpcTarget.Others, timeline);
+        for (int i = 0; i < Timelines.Length; i++)
+        {
+            Timelines[i].Enable(i == timeline);
+        }
     }
 
     public static void PreviewTimeline(int timeline, bool enable)

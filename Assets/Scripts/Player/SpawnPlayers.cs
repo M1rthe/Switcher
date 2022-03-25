@@ -17,10 +17,22 @@ public class SpawnPlayers : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
+        //Set spawnpoint
         spawnPositions = transform.Find("SpawnPositions").transform;
         int index = System.Convert.ToInt32(Client.hostJoin == Client.HostJoin.Host);
         Vector3 spawnPosition = spawnPositions.GetChild(index).position;
+
+        // (past) | present | (future)
+        Client.playerType = (Client.PlayerType)index;
+
+        //Instantiate
+        Debug.LogError("Instantiate players");
         GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity);
-        if (Client.hostJoin == Client.HostJoin.Host) player.GetPhotonView().RPC("ChangeColor", RpcTarget.AllBuffered);
+
+        //Color
+        if (Client.hostJoin == Client.HostJoin.Host)
+        {
+            player.GetPhotonView().RPC("ChangeColor", RpcTarget.All);
+        }
     }
 }

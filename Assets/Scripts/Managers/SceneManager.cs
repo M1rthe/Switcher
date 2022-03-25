@@ -16,7 +16,7 @@ public sealed class SceneManager : FullScreenManager
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            photonView.RPC("GotoMenu", RpcTarget.AllBuffered);
+            photonView.RPC("GotoMenu", RpcTarget.All);
         }
 
         ManageKeycodes();

@@ -28,7 +28,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: 
+  DevRegion: eu
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -47,6 +47,12 @@ MonoBehaviour:
   - GotoMenu
   - PickUp
   - Select
+  - SetStartTimeline
+  - UpdateLayer
+  - SetOtherPlayerTimeline
+  - SendOtherPlayersYourCurrentTimeline
+  - SendOtherPlayerYourCurrentTimeline
+  - SetColorTransparent
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 0
+  DevRegionSetOnce: 1

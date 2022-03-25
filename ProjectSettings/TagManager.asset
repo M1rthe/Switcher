@@ -22,12 +22,12 @@ TagManager:
   - PostProcessing
   - IgnorePlayer
   - Player
-  - Item_CurrentTL
-  - Item_EveryTL
-  - Item_OnlyCurrentTL
-  - Held_Item_CurrentTL
-  - Held_Item_EveryTL
-  - Held_Item_OnlyCurrentTL
+  - OtherPlayer
+  - Item
+  - ItemInvisibleToPlayer
+  - ItemInvisibleToOther
+  - ItemInvisibleToBothPlayers
+  - 
   - 
   - 
   - 

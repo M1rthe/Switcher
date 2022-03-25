@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{716F907A-1E09-25E9-2E22-E7A94A6CDDB6}</ProjectGuid>
+    <ProjectGuid>{CD32D849-D02A-3026-DD2A-A7808243AB34}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>PunDemos.DemoSlotcarEditor</AssemblyName>
@@ -267,16 +267,16 @@
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Assets/Photon/PhotonLibs/netstandard2.0/Photon3Unity3D.dll</HintPath>
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Assets/Photon/PhotonLibs/netstandard2.0/Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="websocket-sharp">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.NRefactory">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.10f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
@@ -632,22 +632,22 @@
     <Reference Include="Boo.Lang">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.10f1/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.UI">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.UI">
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.TestRunner">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TestRunner">
-      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/HDRP Switcher/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
+      <HintPath>C:/Users/Mithe/Desktop/School/3 - Jaar/Meesterproef/Switcher/Switcher/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{FC1A12A9-D1B2-5EF4-D0B7-7CCA37A5560E}</Project>
+      <Project>{FA7CC873-075C-EB0A-2E45-B66E3BF39CF0}</Project>
       <Name>PhotonUnityNetworking.Demos</Name>
     </ProjectReference>
   </ItemGroup>
