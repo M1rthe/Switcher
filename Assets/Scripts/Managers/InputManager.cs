@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FullScreenManager : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
-    protected void ManageKeycodes()
+    public virtual void Update()
     {
         if (Input.GetKeyDown(KeyCode.C))
         {

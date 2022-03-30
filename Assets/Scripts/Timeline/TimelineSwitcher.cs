@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
+using Photon.Pun;
 
 public class TimelineSwitcher : MonoBehaviour
 {
@@ -12,17 +13,20 @@ public class TimelineSwitcher : MonoBehaviour
     [SerializeField] Text currentTimeline;
     [SerializeField] GameObject topLeftPanel;
 
+    [Space]
+
+    PhotonView missionCheckView;
+
     bool displayingPreview = false;
     float previewDuration = 3.5f;
 
     void Start()
     {
-        TimelineManager.CurrentTimeline = 1;
-        TimelineManager.SetTimeline(TimelineManager.TimelineAsInt("Present"));
-
         vignette.weight = 0f;
-
+        TimelineManager.SetTimeline(TimelineManager.CurrentTimeline);
         currentTimeline.text = TimelineManager.Timelines[TimelineManager.CurrentTimeline].name;
+
+        missionCheckView = FindObjectOfType<MissionCheck>().transform.GetComponent<PhotonView>();
     }
 
     void Update()
@@ -53,6 +57,8 @@ public class TimelineSwitcher : MonoBehaviour
 
     void ToggleTimelines()
     {
+        missionCheckView.RPC("Switched", RpcTarget.All);
+
         if (Client.PlayerType.PastPresent == Client.playerType)
         {
             if (TimelineManager.CurrentTimeline == 0)

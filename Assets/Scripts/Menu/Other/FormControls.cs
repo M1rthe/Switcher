@@ -25,10 +25,18 @@ public class FormControls : MonoBehaviour
             EventTrigger.Entry entry = new EventTrigger.Entry();
             entry.eventID = EventTriggerType.Select;
 
+            //Add on Inputfield deselected event
+            EventTrigger.Entry exit = new EventTrigger.Entry();
+            exit.eventID = EventTriggerType.Deselect;
+
             //Add event where 'currentInputfield' gets updated on selected
             int temp = i;
+
             entry.callback.AddListener((eventData) => { currentInputfield = temp; });
             eventTrigger.triggers.Add(entry);
+
+            exit.callback.AddListener((eventData) => { currentInputfield = -1; });
+            eventTrigger.triggers.Add(exit);
         }
     }
 
@@ -56,6 +64,14 @@ public class FormControls : MonoBehaviour
                     btn.onClick.Invoke();
                     break;
                 }
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (currentInputfield != -1)
+            {
+                inputFields[currentInputfield].text = GUIUtility.systemCopyBuffer;
             }
         }
     }

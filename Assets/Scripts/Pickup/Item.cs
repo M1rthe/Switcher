@@ -5,6 +5,8 @@ using Photon.Pun;
 
 public class Item : MonoBehaviour
 {
+    [Space(25)]
+    [Header("Requires: Collider, Rigidbody & PhotonView")]
     public string itemName = "";
 
     public Vector3 positionOffset = new Vector3(0, 0, 0);
@@ -14,7 +16,7 @@ public class Item : MonoBehaviour
     [HideInInspector] public Transform startParent;
     [HideInInspector] public bool inHand = false;
 
-    MeshRenderer meshRenderer;
+    MeshRenderer[] meshRenderers;
 
     //PhotonView
     private PhotonView photonView;
@@ -63,8 +65,8 @@ public class Item : MonoBehaviour
 
         //Parent
         startParent = transform.parent; //Get Parent
-        meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.shadowCastingMode = 0; //Cast Shadows OFF
+        meshRenderers = GetComponentsInChildren<MeshRenderer>();
+        foreach(MeshRenderer meshRenderer in meshRenderers) meshRenderer.shadowCastingMode = 0; //Cast Shadows OFF
                 
         //Rigidbody
         rb = GetComponent<Rigidbody>(); //Get rigidbody
@@ -89,12 +91,34 @@ public class Item : MonoBehaviour
         bool invisibleToPlayer = StartTimeline != TimelineManager.CurrentTimeline;
         bool invisibleToOtherPlayer = StartTimeline != TimelineManager.CurrentTimelineOtherPlayer;
 
-        if (invisibleToPlayer) gameObject.layer = itemInvisibleToPlayerLayer;
-        if (invisibleToOtherPlayer) gameObject.layer = itemInvisibleToOtherLayer;
-        if (invisibleToPlayer && invisibleToOtherPlayer) gameObject.layer = itemInvisibleToBothPlayersLayer;
-        if (!invisibleToPlayer && !invisibleToOtherPlayer) gameObject.layer = itemLayer;
+        SetColorTransparent(false);
 
-        //Debug.LogError("UpdateLayer() layer : " + LayerMask.LayerToName(gameObject.layer));
+        if (invisibleToPlayer)
+        {
+            if (type == Type.CurrentTL)
+            {
+                gameObject.layer = itemInvisibleToOtherLayer;
+                SetColorTransparent(true);
+            }
+            if (type == Type.OnlyCurrentTL)
+            {
+                gameObject.layer = itemInvisibleToPlayerLayer;
+            }
+        }
+        if (invisibleToOtherPlayer) gameObject.layer = itemInvisibleToOtherLayer;
+        if (invisibleToPlayer && invisibleToOtherPlayer)
+        {
+            if (type == Type.CurrentTL)
+            {
+                gameObject.layer = itemLayer;
+                SetColorTransparent(true);
+            }
+            if (type == Type.OnlyCurrentTL)
+            {
+                gameObject.layer = itemInvisibleToBothPlayersLayer;
+            }
+        }
+        if (!invisibleToPlayer && !invisibleToOtherPlayer) gameObject.layer = itemLayer;
     }
 
     public virtual void OnPickup()
@@ -105,5 +129,16 @@ public class Item : MonoBehaviour
     public virtual void OnDrop()
     {
         inHand = false; 
+    }
+
+    public void SetColorTransparent(bool enable)
+    {
+        foreach (MeshRenderer meshRenderer in meshRenderers)
+        {
+            Color c = meshRenderer.material.GetColor("_BaseColor");
+            if (enable) c.a = 0.25f;
+            else c.a = 1f;
+            meshRenderer.material.SetColor("_BaseColor", c);
+        }
     }
 }

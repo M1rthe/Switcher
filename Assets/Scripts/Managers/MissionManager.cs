@@ -12,14 +12,17 @@ public class MissionManager : MonoBehaviour
 
     void Start()
     {
+        //Get text components
         storyText = missionPanel.transform.Find("Story").GetChild(1).GetComponent<Text>();
         missionText = missionPanel.transform.Find("Mission").GetChild(1).GetComponent<Text>();
 
-        string data = System.IO.File.ReadAllText(Application.streamingAssetsPath + "/LevelMissions.json");
-        List<LevelInfo> levelInfos = JsonUtility.FromJson<AllLevelInfo>(data).levelMissions;
-        int currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex - 1;
-        storyText.text = levelInfos[currentScene].story;
-        missionText.text = levelInfos[currentScene].mission;
+        //Cast to list
+        List<LevelObjective> levelInfos = LevelData.ReadLevelObjectives();
+
+        //Get level info of current level, set text 
+        LevelObjective currentLevel = levelInfos[UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex - 1];
+        storyText.text = currentLevel.story;
+        missionText.text = currentLevel.mission;
     }
 
     void Awake()
@@ -32,25 +35,17 @@ public class MissionManager : MonoBehaviour
     {
         if (firstTimeShown)
         {
+            //Click away with any key
             if (Input.anyKeyDown)
             {
                 missionPanel.SetActive(false);
                 firstTimeShown = false;
             }
-        } else if (Input.GetKeyDown(KeyCode.M))
+        } 
+        else if (Input.GetKeyDown(KeyCode.M))
         {
+            //Toggle with 'M'
             missionPanel.SetActive(!missionPanel.activeSelf);
         }
     }
-}
-public class AllLevelInfo
-{
-    public List<LevelInfo> levelMissions = new List<LevelInfo>();
-}
-    
-[System.Serializable]
-public class LevelInfo
-{
-    public string story;
-    public string mission;
 }

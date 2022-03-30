@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public sealed class SceneManager : FullScreenManager
+public sealed class SceneManager : InputManager
 {
     PhotonView photonView;
 
@@ -12,20 +12,21 @@ public sealed class SceneManager : FullScreenManager
         photonView = GetComponent<PhotonView>();
     }
 
-    void Update()
+    public override void Update()
     {
+        base.Update();
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             photonView.RPC("GotoMenu", RpcTarget.All);
         }
-
-        ManageKeycodes();
     }
 
     [PunRPC]
     void GotoMenu()
     {
         Client.location = Client.Location.Menu;
+
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }

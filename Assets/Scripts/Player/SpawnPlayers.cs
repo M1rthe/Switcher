@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
@@ -6,6 +7,7 @@ using Photon.Pun;
 public class SpawnPlayers : MonoBehaviour
 {
     [SerializeField] Object playerPrefab;
+    [SerializeField] Object otherPlayerPrefab;
     Transform spawnPositions;
 
     void Awake()
@@ -26,13 +28,19 @@ public class SpawnPlayers : MonoBehaviour
         Client.playerType = (Client.PlayerType)index;
 
         //Instantiate
-        Debug.LogError("Instantiate players");
         GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity);
 
         //Color
         if (Client.hostJoin == Client.HostJoin.Host)
         {
             player.GetPhotonView().RPC("ChangeColor", RpcTarget.All);
+        }
+
+        //Invoke OnPlayerSpawned
+        var onPlayersSpawnedInterfaces = FindObjectsOfType<MonoBehaviour>().OfType<IOnPlayersSpawned>();
+        foreach (IOnPlayersSpawned pnPlayersSpawned in onPlayersSpawnedInterfaces)
+        {
+            pnPlayersSpawned.OnPlayersSpawned();
         }
     }
 }

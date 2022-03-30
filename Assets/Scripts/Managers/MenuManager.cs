@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class MenuManager : FullScreenManager
+public class MenuManager : InputManager
 {
     [HideInInspector] public PhotonView photonView;
 
@@ -16,15 +16,16 @@ public class MenuManager : FullScreenManager
     {
         photonView = GetComponent<PhotonView>();
 
-        if (Time.frameCount < 10) GotoMainMenu();
+        if (Time.frameCount < 10) { GotoMainMenu(); }
+        else { GotoLevelMenu(); }
 
         //Cursor
         Cursor.lockState = CursorLockMode.None;
     }
 
-    void Update()
+    public override void Update()
     {
-        ManageKeycodes();
+        base.Update();
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -131,7 +132,6 @@ public class MenuManager : FullScreenManager
         hostMenu.gameObject.SetActive(false);
         joinMenu.gameObject.SetActive(false);
         levelMenu.gameObject.SetActive(true);
-
         levelMenu.AddLevelUI();
     }
 }

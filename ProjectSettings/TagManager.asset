@@ -23,12 +23,12 @@ TagManager:
   - IgnorePlayer
   - Player
   - OtherPlayer
+  - GhostPlayer
+  - OtherGhostPlayer
   - Item
-  - ItemInvisibleToPlayer
-  - ItemInvisibleToOther
   - ItemInvisibleToBothPlayers
-  - 
-  - 
+  - ItemInvisibleToOther
+  - ItemInvisibleToPlayer
   - 
   - 
   - 

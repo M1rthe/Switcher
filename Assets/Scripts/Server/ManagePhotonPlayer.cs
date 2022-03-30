@@ -6,37 +6,58 @@ using Photon.Pun;
 public class ManagePhotonPlayer : MonoBehaviour
 {
     public PhotonView PhotonView { get; set; }
+    Camera cam;
+
     [SerializeField] List<Behaviour> components = new List<Behaviour>();
     [SerializeField] List<GameObject> gameObjects = new List<GameObject>();
+
+    LayerMask playerLayer;
+    LayerMask otherPlayerLayer;
+    LayerMask ghostPlayerLayer;
+    LayerMask otherGhostPlayerLayer;
 
     MeshRenderer body;
 
     void Awake()
     {
         PhotonView = GetComponent<PhotonView>();
+        cam = GetComponentInChildren<Camera>();
+        body = transform.Find("PlayerModel/Body").GetComponent<MeshRenderer>();
 
-        Camera cam = GetComponentInChildren<Camera>();
+        playerLayer = LayerMask.NameToLayer("Player");
+        otherPlayerLayer = LayerMask.NameToLayer("OtherPlayer");
+        ghostPlayerLayer = LayerMask.NameToLayer("GhostPlayer");
+        otherGhostPlayerLayer = LayerMask.NameToLayer("OtherGhostPlayer");
 
-        if (PhotonView.IsMine)
-        { 
-            Client.photonPlayer = PhotonView.Owner;
-            gameObject.layer = LayerMask.NameToLayer("Player");
-            cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToOther"));
-            //Debug.LogError("PhotonPlayer: " + Client.photonPlayer.NickName);
+        List<StartTimeline> startTimelines = LevelData.ReadStartTimeline();
+        StartTimeline startTimeline = startTimelines[Client.GetCurrentScene() - 1];
+        if (Client.hostJoin == Client.HostJoin.Host) TimelineManager.SetTimeline(startTimeline.p0);
+        else TimelineManager.SetTimeline(startTimeline.p1);
+
+        ConvertToOtherPlayer(!PhotonView.IsMine);
+    }
+
+    void ConvertToOtherPlayer(bool isOtherPlayer)
+    {
+        if (isOtherPlayer)
+        {
+            //Other player
+            SetLayerRecursively(gameObject, otherPlayerLayer); //Player Layer
+            cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToPlayer")); //Culling Mask
         }
         else
         {
-            gameObject.layer = LayerMask.NameToLayer("OtherPlayer");
-            cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToPlayer"));
-            //Debug.LogError("Other PhotonPlayer: " + photonView.Owner.NickName);
+            //Current player
+            Client.photonPlayer = PhotonView.Owner;
+
+            SetLayerRecursively(gameObject, playerLayer); //Player Layer
+            cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToOther")); //Culling Mask
         }
 
-        body = transform.Find("PlayerModel/Body").GetComponent<MeshRenderer>();
-        foreach (Behaviour component in components) component.enabled = PhotonView.IsMine;
-        foreach (GameObject gameObject in gameObjects) gameObject.SetActive(PhotonView.IsMine);
-
-        /*foreach (Behaviour component in components) if (!photonView.IsMine) Destroy(component);
-        foreach (GameObject gameObject in gameObjects) if (!photonView.IsMine) Destroy(gameObject);*/
+        //Turn off the extra components
+        foreach (Behaviour component in components) component.enabled = !isOtherPlayer;
+        //Turn off the extra gameobjects
+        foreach (GameObject gameObject in gameObjects) gameObject.SetActive(!isOtherPlayer);
     }
 
     [PunRPC]
@@ -49,8 +70,25 @@ public class ManagePhotonPlayer : MonoBehaviour
     public void SetColorTransparent(bool enable)
     {
         Color c = body.material.GetColor("_BaseColor");
-        if (enable) c.a = 0.5f;
-        else c.a = 1f;
+        if (enable)
+        {
+            c.a = 0.5f;
+            if (gameObject.layer == playerLayer) SetLayerRecursively(gameObject, ghostPlayerLayer);
+            if (gameObject.layer == otherPlayerLayer) SetLayerRecursively(gameObject, otherGhostPlayerLayer);
+        }
+        else
+        {
+            c.a = 1f;
+            if (gameObject.layer == ghostPlayerLayer) SetLayerRecursively(gameObject, playerLayer);
+            if (gameObject.layer == otherGhostPlayerLayer) SetLayerRecursively(gameObject, otherPlayerLayer);
+        }
         body.material.SetColor("_BaseColor", c);
+    }
+
+    void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform) SetLayerRecursively(child.gameObject, newLayer);
     }
 }

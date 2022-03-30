@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Photon.Pun;
+using UnityEngine.UIElements;
 
 [System.Serializable]
 public class Timeline : MonoBehaviour
@@ -11,6 +12,8 @@ public class Timeline : MonoBehaviour
     ParticleSystem[] particleSystems;
     Canvas[] canvasses;
     Volume[] volumes;
+    Door[] doors;
+
     LayerMask ignorePlayerMask;
     LayerMask defaultMask;
 
@@ -22,6 +25,7 @@ public class Timeline : MonoBehaviour
         particleSystems = GetComponentsInChildren<ParticleSystem>();
         canvasses = GetComponentsInChildren<Canvas>();
         volumes = GetComponentsInChildren<Volume>();
+        doors = GetComponentsInChildren<Door>();
     }
 
     public void Enable(bool enable)
@@ -38,7 +42,7 @@ public class Timeline : MonoBehaviour
                     if (item.type == Item.Type.OnlyCurrentTL) item.GetComponentInParent<Pickup>().Drop(Client.photonPlayer);
                 }
 
-                item.PhotonView.RPC("UpdateLayer", Photon.Pun.RpcTarget.All);
+                item.PhotonView.RPC("UpdateLayer", RpcTarget.All);
             }
             else
             {
@@ -55,7 +59,7 @@ public class Timeline : MonoBehaviour
         {
             foreach (ManagePhotonPlayer managePhotonPlayer in GameObject.FindObjectsOfType<ManagePhotonPlayer>())
             {
-                Debug.LogError("SetColorTransparent()");
+                //Debug.LogError("SetColorTransparent() : CurrentTimeline = "+TimelineManager.CurrentTimeline + ", CurrentTimelineOtherPlayer = "+TimelineManager.CurrentTimelineOtherPlayer);
                 managePhotonPlayer.PhotonView.RPC("SetColorTransparent", RpcTarget.All, TimelineManager.CurrentTimeline != TimelineManager.CurrentTimelineOtherPlayer);
             }
         }
@@ -75,6 +79,11 @@ public class Timeline : MonoBehaviour
         {
             volume.enabled = enable;
         }
+
+        foreach (Door door in doors)
+        {
+            if (!enable) door.checkInput = false;
+        }
     }
 
     public void TransparentMode(bool enable)
@@ -87,7 +96,6 @@ public class Timeline : MonoBehaviour
 
                 if (item.type == Item.Type.EveryTL)
                 {
-                    meshRenderer.enabled = true;
                     print("Keep : " + item.name);
                 }
                 if (item.type == Item.Type.CurrentTL && item.inHand)

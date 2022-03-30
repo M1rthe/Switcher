@@ -4,6 +4,8 @@ public class Client : MonoBehaviourPunCallbacks
 {
     public static Photon.Realtime.Player photonPlayer;
 
+    public static int GetCurrentScene() { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; }
+
     public enum PlayerType { PastPresent, FuturePresent }
     public static PlayerType playerType;
 

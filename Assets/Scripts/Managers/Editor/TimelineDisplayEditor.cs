@@ -26,6 +26,20 @@ public class TimelineDisplayEditor : EditorWindow
 
         GUILayout.Space(10);
 
+        if (GUILayout.Button("Everything (build)"))
+        {
+            CheckNULL();
+
+            if (past != null && present != null && future != null)
+            {
+                Enable(past, true);
+                Enable(present, true);
+                Enable(future, true);
+            }
+        }
+
+        GUILayout.Space(10);
+
         if (GUILayout.Button("Past"))
         {
             CheckNULL();

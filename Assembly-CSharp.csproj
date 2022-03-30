@@ -78,7 +78,9 @@
     <Compile Include="Assets\Photon\PhotonLibs\WebSocket\SocketWebTcp.cs" />
     <Compile Include="Assets\Photon\PhotonLibs\WebSocket\WebSocket.cs" />
     <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
-    <Compile Include="Assets\Scripts\Managers\FullScreenManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\IOnPlayersSpawned.cs" />
+    <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\InstructionManager.cs" />
     <Compile Include="Assets\Scripts\Managers\MenuManager.cs" />
     <Compile Include="Assets\Scripts\Managers\MissionManager.cs" />
     <Compile Include="Assets\Scripts\Managers\SceneManager.cs" />
@@ -87,7 +89,12 @@
     <Compile Include="Assets\Scripts\Menu\JoinMenu.cs" />
     <Compile Include="Assets\Scripts\Menu\LevelMenu.cs" />
     <Compile Include="Assets\Scripts\Menu\Other\FormControls.cs" />
+    <Compile Include="Assets\Scripts\Menu\Other\LevelData.cs" />
     <Compile Include="Assets\Scripts\Menu\Other\LevelSelectionBox.cs" />
+    <Compile Include="Assets\Scripts\Misc\CheckMissionSucces\Level1MissionCheck.cs" />
+    <Compile Include="Assets\Scripts\Misc\CheckMissionSucces\MissionCheck.cs" />
+    <Compile Include="Assets\Scripts\Misc\Door.cs" />
+    <Compile Include="Assets\Scripts\Misc\TriggerEvent.cs" />
     <Compile Include="Assets\Scripts\Pickup\Item.cs" />
     <Compile Include="Assets\Scripts\Pickup\Pickup.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
