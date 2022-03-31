@@ -7,7 +7,6 @@ using Photon.Pun;
 public class SpawnPlayers : MonoBehaviour
 {
     [SerializeField] Object playerPrefab;
-    [SerializeField] Object otherPlayerPrefab;
     Transform spawnPositions;
 
     void Awake()
