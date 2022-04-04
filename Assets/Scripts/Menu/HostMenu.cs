@@ -8,6 +8,7 @@ public class HostMenu : MonoBehaviourPunCallbacks
 {
     [SerializeField] MenuManager menuManager;
     [Space]
+    [SerializeField] InputField code;
     [SerializeField] Text error;
     [SerializeField] Button createServerButton;
     [SerializeField] Button playButton;
@@ -25,6 +26,7 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
         createServerButton.interactable = true;
         playButton.interactable = false;
+        code.gameObject.SetActive(false);
     }
 
     void GiveError(string errorMsg)
@@ -59,6 +61,10 @@ public class HostMenu : MonoBehaviourPunCallbacks
             string id = System.Guid.NewGuid().ToString("N"); //Generate code
             PhotonNetwork.CreateRoom(id, roomOptions); //Create Photon Room
             GUIUtility.systemCopyBuffer = id;
+
+            //UI
+            code.text = id;
+            code.gameObject.SetActive(true);
         }
         else if (Client.roomStatus == Client.RoomStatus.InRoom) Debug.LogError("Already entered room");
         else if (Client.roomStatus == Client.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
@@ -131,11 +137,19 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
         //Update playercount on Play button
         playButtonText.text = "Play (" + PhotonNetwork.CurrentRoom.PlayerCount + "/2 players)";
+        UpdatePlayButtonInteractable();
     }
 
     public override void OnPlayerLeftRoom(Player newPlayer)
     {
         //Update playercount on Play button
         playButtonText.text = "Play (" + PhotonNetwork.CurrentRoom.PlayerCount + "/2 players)";
+        UpdatePlayButtonInteractable();
+    }
+
+    void UpdatePlayButtonInteractable()
+    {
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2) playButton.interactable = true;
+        else playButton.interactable = false;
     }
 }
