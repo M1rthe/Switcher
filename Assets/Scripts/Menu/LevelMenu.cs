@@ -50,14 +50,14 @@ public class LevelMenu : MonoBehaviour
             level.SetLevelProgress(levelProgress[i - 1]);
 
             //Destroy ability to show level selection, when joiner
-            if (Client.hostJoin == Client.HostJoin.Join) Destroy(level.transform.GetComponent<UnityEngine.EventSystems.EventTrigger>());
+            if (GameManager.hostJoin == GameManager.HostJoin.Join) Destroy(level.transform.GetComponent<UnityEngine.EventSystems.EventTrigger>());
 
             //Set LevelSelectionBox callback
             int dereferencedI = level.transform.GetSiblingIndex() + 1;
             level.button.onClick.AddListener(
                 delegate
                 {
-                    if (Client.hostJoin == Client.HostJoin.Host)
+                    if (GameManager.hostJoin == GameManager.HostJoin.Host)
                     {
                         photonView.RPC("GotoLevel", RpcTarget.All, dereferencedI);
                     }
@@ -72,8 +72,6 @@ public class LevelMenu : MonoBehaviour
     [PunRPC]
     public void GotoLevel(int sceneIndex)
     {
-        Client.location = Client.Location.Game;
-
         //Cursor
         Cursor.lockState = CursorLockMode.Locked; 
         Cursor.visible = false;

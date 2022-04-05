@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class ManagePhotonPlayer : MonoBehaviour
 {
@@ -30,8 +31,8 @@ public class ManagePhotonPlayer : MonoBehaviour
         otherGhostPlayerLayer = LayerMask.NameToLayer("OtherGhostPlayer");
 
         List<StartTimeline> startTimelines = LevelData.ReadStartTimeline();
-        StartTimeline startTimeline = startTimelines[Client.GetCurrentScene() - 1];
-        if (Client.hostJoin == Client.HostJoin.Host) TimelineManager.SetTimeline(startTimeline.p0);
+        StartTimeline startTimeline = startTimelines[GameManager.GetCurrentScene() - 1];
+        if (GameManager.hostJoin == GameManager.HostJoin.Host) TimelineManager.SetTimeline(startTimeline.p0);
         else TimelineManager.SetTimeline(startTimeline.p1);
 
         ConvertToOtherPlayer(!PhotonView.IsMine);
@@ -48,7 +49,7 @@ public class ManagePhotonPlayer : MonoBehaviour
         else
         {
             //Current player
-            Client.photonPlayer = PhotonView.Owner;
+            GameManager.photonPlayer = PhotonView.Owner;
 
             SetLayerRecursively(gameObject, playerLayer); //Player Layer
             cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToOther")); //Culling Mask

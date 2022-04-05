@@ -50,9 +50,9 @@ public class HostMenu : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (Client.roomStatus == Client.RoomStatus.OutRoom)
+        if (GameManager.roomStatus == GameManager.RoomStatus.OutRoom)
         {
-            Client.roomStatus = Client.RoomStatus.JoiningRoom;
+            GameManager.roomStatus = GameManager.RoomStatus.JoiningRoom;
 
             //Create room
             RoomOptions roomOptions = new RoomOptions();
@@ -66,8 +66,8 @@ public class HostMenu : MonoBehaviourPunCallbacks
             code.text = id;
             code.gameObject.SetActive(true);
         }
-        else if (Client.roomStatus == Client.RoomStatus.InRoom) Debug.LogError("Already entered room");
-        else if (Client.roomStatus == Client.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
+        else if (GameManager.roomStatus == GameManager.RoomStatus.InRoom) Debug.LogError("Already entered room");
+        else if (GameManager.roomStatus == GameManager.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
         else Debug.LogError("Still leaving room");
     }
 
@@ -79,19 +79,19 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
     public void LeaveRoom()
     {
-        Client.roomStatus = Client.RoomStatus.LeavingRoom;
+        GameManager.roomStatus = GameManager.RoomStatus.LeavingRoom;
         PhotonNetwork.LeaveRoom();
         OnLeftRoom();
     }
 
     IEnumerator Wait4OtherPlayers()
     {
-        while (PhotonNetwork.CurrentRoom.PlayerCount < 2 && Client.roomStatus == Client.RoomStatus.InRoom)
+        while (PhotonNetwork.CurrentRoom.PlayerCount < 2 && GameManager.roomStatus == GameManager.RoomStatus.InRoom)
         {
             yield return null;
         }
 
-        if (Client.roomStatus == Client.RoomStatus.InRoom)
+        if (GameManager.roomStatus == GameManager.RoomStatus.InRoom)
         {
             playButton.interactable = true;
         }
@@ -103,8 +103,8 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
     public override void OnCreatedRoom()
     {
-        Client.roomStatus = Client.RoomStatus.InRoom;
-        Client.hostJoin = Client.HostJoin.Host;
+        GameManager.roomStatus = GameManager.RoomStatus.InRoom;
+        GameManager.hostJoin = GameManager.HostJoin.Host;
 
         createServerButton.interactable = false; //Cannot create server again
 
@@ -124,8 +124,8 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        Client.roomStatus = Client.RoomStatus.OutRoom;
-        Client.hostJoin = Client.HostJoin.Undefined;
+        GameManager.roomStatus = GameManager.RoomStatus.OutRoom;
+        GameManager.hostJoin = GameManager.HostJoin.Undefined;
 
         createServerButton.interactable = true;
         playButtonText.text = "Play";
@@ -140,8 +140,9 @@ public class HostMenu : MonoBehaviourPunCallbacks
         UpdatePlayButtonInteractable();
     }
 
-    public override void OnPlayerLeftRoom(Player newPlayer)
+    public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+        Debug.LogError(otherPlayer.NickName+" left room");
         //Update playercount on Play button
         playButtonText.text = "Play (" + PhotonNetwork.CurrentRoom.PlayerCount + "/2 players)";
         UpdatePlayButtonInteractable();

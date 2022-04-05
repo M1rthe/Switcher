@@ -9,12 +9,12 @@ public class Level1MissionCheck : MissionCheck
 
     void OnTriggerEnter(Collider other)
     {
-        if (Client.hostJoin == Client.HostJoin.Host)
+        if (GameManager.hostJoin == GameManager.HostJoin.Host)
         {
             if (other.transform.gameObject == cat)
             {
                 Debug.LogError("YOU WON!!!!!");
-                base.photonView.RPC("Succes", Photon.Pun.RpcTarget.All);
+                base.photonView.RPC("Succes", RpcTarget.All);
             }
         }
     }

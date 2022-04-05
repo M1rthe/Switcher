@@ -47,19 +47,22 @@ public class TimelineSwitcher : MonoBehaviour
         //Toggle Timelines
         if (Input.GetMouseButtonDown(3))
         {
+            Debug.LogError("Third mouse button down");
             bool switchPreview = displayingPreview;
 
             if (switchPreview) DisplayPreview(false);
             ToggleTimelines();
             if (switchPreview) DisplayPreview(true);
         }
+
+        if (Input.GetKeyDown(KeyCode.T)) Debug.LogError("TEST");
     }
 
     void ToggleTimelines()
     {
         missionCheckView.RPC("Switched", RpcTarget.All);
 
-        if (Client.PlayerType.PastPresent == Client.playerType)
+        if (GameManager.PlayerType.PastPresent == GameManager.playerType)
         {
             if (TimelineManager.CurrentTimeline == 0)
             {
@@ -73,7 +76,7 @@ public class TimelineSwitcher : MonoBehaviour
             }
         }
 
-        if (Client.PlayerType.FuturePresent == Client.playerType)
+        if (GameManager.PlayerType.FuturePresent == GameManager.playerType)
         {
             if (TimelineManager.CurrentTimeline == 2)
             {
@@ -101,7 +104,7 @@ public class TimelineSwitcher : MonoBehaviour
         {
             vignette.weight = 0.7f;
 
-            if (Client.PlayerType.PastPresent == Client.playerType)
+            if (GameManager.PlayerType.PastPresent == GameManager.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 0)
                 {
@@ -115,7 +118,7 @@ public class TimelineSwitcher : MonoBehaviour
                 }
             }
 
-            if (Client.PlayerType.FuturePresent == Client.playerType)
+            if (GameManager.PlayerType.FuturePresent == GameManager.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 2)
                 {
@@ -133,7 +136,7 @@ public class TimelineSwitcher : MonoBehaviour
         {
             vignette.weight = 0f;
 
-            if (Client.PlayerType.PastPresent == Client.playerType)
+            if (GameManager.PlayerType.PastPresent == GameManager.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 0)
                 {
@@ -145,7 +148,7 @@ public class TimelineSwitcher : MonoBehaviour
                 }
             }
 
-            if (Client.PlayerType.FuturePresent == Client.playerType)
+            if (GameManager.PlayerType.FuturePresent == GameManager.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 2)
                 {

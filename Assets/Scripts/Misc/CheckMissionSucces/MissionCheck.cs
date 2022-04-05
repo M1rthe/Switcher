@@ -42,8 +42,7 @@ public class MissionCheck : MonoBehaviour
     protected void Succes()
     {
         LevelProgress levelProgress = GetProgress();
-        LevelData.SaveLevelProgress(Client.GetCurrentScene() - 1, levelProgress);
-        Client.location = Client.Location.Menu;
+        LevelData.SaveLevelProgress(GameManager.GetCurrentScene() - 1, levelProgress);
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }

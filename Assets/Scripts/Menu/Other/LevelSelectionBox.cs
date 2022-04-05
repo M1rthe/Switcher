@@ -32,7 +32,7 @@ public class LevelSelectionBox : MonoBehaviour
         if (select) outline.color = Color.grey;
         else outline.color = Color.white;
 
-        if (Client.hostJoin == Client.HostJoin.Host)
+        if (GameManager.hostJoin == GameManager.HostJoin.Host)
         {
             //If host, also select the boxes for the other players
             photonView.RPC("Select", RpcTarget.Others, select, transform.GetSiblingIndex());

@@ -2,15 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 public sealed class SceneManager : InputManager
 {
-    PhotonView photonView;
+    //PhotonView photonView;
 
-    void Start()
-    {
-        photonView = GetComponent<PhotonView>();
-    }
+    //void Start()
+    //{
+    //    photonView = GetComponent<PhotonView>();
+    //}
 
     public override void Update()
     {
@@ -25,8 +26,11 @@ public sealed class SceneManager : InputManager
     [PunRPC]
     void GotoMenu()
     {
-        Client.location = Client.Location.Menu;
-
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        photonView.RPC("GotoMenu", RpcTarget.All);
     }
 }

@@ -29,7 +29,7 @@ public class Pickup : MonoBehaviour
                     if (item != null)
                     {
                         //Let this player pickup this item for every player
-                        photonView.RPC("PickUp", RpcTarget.All, Client.photonPlayer, item.PhotonView.ViewID);
+                        photonView.RPC("PickUp", RpcTarget.All, GameManager.photonPlayer, item.PhotonView.ViewID);
                     }
                 }
             }
@@ -42,7 +42,7 @@ public class Pickup : MonoBehaviour
                     if (!DropsInWall()) //WallCheck
                     {
                         //Let this player drop for all players
-                        photonView.RPC("Drop", RpcTarget.All, Client.photonPlayer);
+                        photonView.RPC("Drop", RpcTarget.All, GameManager.photonPlayer);
                     }
                 }
             }

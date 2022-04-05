@@ -39,7 +39,7 @@ public class Timeline : MonoBehaviour
                 if (item.inHand)
                 {
                     if (item.type == Item.Type.CurrentTL) item.StartTimeline = TimelineManager.CurrentTimeline; 
-                    if (item.type == Item.Type.OnlyCurrentTL) item.GetComponentInParent<Pickup>().Drop(Client.photonPlayer);
+                    if (item.type == Item.Type.OnlyCurrentTL) item.GetComponentInParent<Pickup>().Drop(GameManager.photonPlayer);
                 }
 
                 item.PhotonView.RPC("UpdateLayer", RpcTarget.All);
