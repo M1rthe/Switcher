@@ -19,18 +19,21 @@ public class Door : MonoBehaviour, IOnPlayersSpawned
 
     InstructionManager instructionManager;
 
+    AudioSource audioSource;
+
     public PhotonView PhotonView { get; private set; }
 
     public void OnPlayersSpawned()
     {
         instructionManager = FindObjectOfType<InstructionManager>();
-        PhotonView.RPC("OpenDoor", RpcTarget.All, isOpen);
+        PhotonView.RPC("OpenDoor", RpcTarget.All, isOpen, false);
     }
 
     void Start()
     {
         anim = GetComponentInChildren<Animation>();
         PhotonView = GetComponent<PhotonView>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -41,23 +44,25 @@ public class Door : MonoBehaviour, IOnPlayersSpawned
             {
                 if (!anim.IsPlaying("DoorOpen") && !anim.IsPlaying("DoorClose"))
                 {
-                    PhotonView.RPC("OpenDoor", RpcTarget.All, !isOpen);
+                    PhotonView.RPC("OpenDoor", RpcTarget.All, !isOpen, true);
                 }
             }
         }
     }
 
     [PunRPC]
-    public void OpenDoor(bool open)
+    public void OpenDoor(bool open, bool makeSound)
     {
         isOpen = open;
+
+        if (makeSound) audioSource.Play();
 
         if (open) anim.Play("DoorOpen");
         else anim.Play("DoorClose");
 
         foreach (Door futureDoor in futureDoors)
         {
-            futureDoor.PhotonView.RPC("OpenDoor", RpcTarget.All, open);
+            futureDoor.PhotonView.RPC("OpenDoor", RpcTarget.All, open, false);
         }
     }
 
