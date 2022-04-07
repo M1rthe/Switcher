@@ -8,7 +8,7 @@ public class HostMenu : MonoBehaviourPunCallbacks
 {
     [SerializeField] MenuManager menuManager;
     [Space]
-    [SerializeField] InputField code;
+    [SerializeField] Text code;
     [SerializeField] Text error;
     [SerializeField] Button createServerButton;
     [SerializeField] Button playButton;

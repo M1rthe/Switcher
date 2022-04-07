@@ -14,4 +14,14 @@ public class CopyPaste : MonoBehaviour
     {
         inputField.text = GUIUtility.systemCopyBuffer;
     }
+
+    public void Copy(Text inputField)
+    {
+        GUIUtility.systemCopyBuffer = inputField.text;
+    }
+
+    public void Paste(Text inputField)
+    {
+        inputField.text = GUIUtility.systemCopyBuffer;
+    }
 }
