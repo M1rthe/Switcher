@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class MenuManager : InputManager
+public class MenuManager : MonoBehaviour
 {
     [HideInInspector] public PhotonView photonView;
 
@@ -23,10 +23,8 @@ public class MenuManager : InputManager
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public override void Update()
+    void Update()
     {
-        base.Update();
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             hostMenu.ClearError();

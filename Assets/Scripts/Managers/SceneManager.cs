@@ -4,19 +4,17 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public sealed class SceneManager : InputManager
+public sealed class SceneManager : MonoBehaviourPunCallbacks
 {
-    //PhotonView photonView;
+    PhotonView photonView;
 
-    //void Start()
-    //{
-    //    photonView = GetComponent<PhotonView>();
-    //}
-
-    public override void Update()
+    void Start()
     {
-        base.Update();
+        photonView = GetComponent<PhotonView>();
+    }
 
+    void Update()
+    {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             photonView.RPC("GotoMenu", RpcTarget.All);
@@ -31,6 +29,7 @@ public sealed class SceneManager : InputManager
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+        //FIND A WAY TO GO TO HOST/JOIN MENU AFTER SWITCHING SCENES
         photonView.RPC("GotoMenu", RpcTarget.All);
     }
 }
