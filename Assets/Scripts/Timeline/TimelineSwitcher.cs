@@ -47,7 +47,6 @@ public class TimelineSwitcher : MonoBehaviour
         //Toggle Timelines
         if (Input.GetMouseButtonDown(3))
         {
-            Debug.LogError("Third mouse button down");
             bool switchPreview = displayingPreview;
 
             if (switchPreview) DisplayPreview(false);
