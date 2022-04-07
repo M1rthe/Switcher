@@ -10,8 +10,8 @@ public class MissionCheck : MonoBehaviour, IOnPlayersSpawned
     [SerializeField] protected float timeLimit = 300;
     [SerializeField] protected int maxSwitches = 8;
 
-    float timePassed = 0f;
-    private static int timesSwithed = 0;
+    protected float timePassed;
+    protected static int timesSwitched;
 
     WinScreen winScreen;
 
@@ -19,6 +19,8 @@ public class MissionCheck : MonoBehaviour, IOnPlayersSpawned
 
     void Start()
     {
+        timePassed = 0;
+        timesSwitched = 0;
         photonView = GetComponent<PhotonView>();   
     }
 
@@ -29,27 +31,22 @@ public class MissionCheck : MonoBehaviour, IOnPlayersSpawned
 
     public virtual void Switched()
     {
-        timesSwithed++;   
-    }
-
-    protected LevelProgress GetProgress()
-    {
-        LevelProgress levelProgress = new LevelProgress();
-        levelProgress.completedMission = true;
-        levelProgress.belowCertainTime = (timePassed < timeLimit);
-        levelProgress.underCertainSwitches = (timesSwithed <= maxSwitches);
-        Debug.LogError($"completedMission: {levelProgress.completedMission}, below {timeLimit} seconds: {levelProgress.belowCertainTime} ({timePassed}), under {maxSwitches} switches: {levelProgress.underCertainSwitches} ({timesSwithed})");
-        return levelProgress;
+        timesSwitched++;   
     }
 
     [PunRPC]
-    protected void Succes()
+    protected void Succes(float timePassed, int timesSwitched)
     {
-        LevelProgress levelProgress = GetProgress();
+        LevelProgress levelProgress = new LevelProgress 
+        {
+            completedMission = true,
+            belowCertainTime = (timePassed < timeLimit),
+            underCertainSwitches = (timesSwitched <= maxSwitches)
+        }; 
         LevelData.SaveLevelProgress(GameManager.GetCurrentScene() - 1, levelProgress);
 
         winScreen.gameObject.SetActive(true);
-        winScreen.SetText("Time: "+ timePassed.ToString("F2") + "s / "+timeLimit+"s", "Times Switched: "+timesSwithed +"x / "+maxSwitches+"x");
+        winScreen.SetText("Time: "+ timePassed.ToString("F2") + "s / "+timeLimit+"s", "Times Switched: "+ timesSwitched + "x / "+maxSwitches+"x");
         winScreen.SetLevelProgress(levelProgress);
 
         StartCoroutine(DisplayWinMessage(delegate{
