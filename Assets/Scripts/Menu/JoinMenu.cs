@@ -38,22 +38,22 @@ public class JoinMenu : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (GameManager.roomStatus == GameManager.RoomStatus.OutRoom)
+        if (GameManager.Instance.roomStatus == GameManager.RoomStatus.OutRoom)
         {
-            GameManager.roomStatus = GameManager.RoomStatus.JoiningRoom;
+            GameManager.Instance.roomStatus = GameManager.RoomStatus.JoiningRoom;
 
             //Join room
             PhotonNetwork.JoinRoom(codeInputfield.text);
             PhotonNetwork.NickName = usernameInputfield.text; //Nickname
         }
-        else if (GameManager.roomStatus == GameManager.RoomStatus.InRoom) Debug.LogError("Already entered room");
-        else if (GameManager.roomStatus == GameManager.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
+        else if (GameManager.Instance.roomStatus == GameManager.RoomStatus.InRoom) Debug.LogError("Already entered room");
+        else if (GameManager.Instance.roomStatus == GameManager.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
         else Debug.LogError("Still leaving room");
     }
 
     public void LeaveRoom()
     {
-        GameManager.roomStatus = GameManager.RoomStatus.LeavingRoom;
+        GameManager.Instance.roomStatus = GameManager.RoomStatus.LeavingRoom;
         PhotonNetwork.LeaveRoom();
         //OnLeftRoom();
     }
@@ -67,15 +67,15 @@ public class JoinMenu : MonoBehaviourPunCallbacks
         joinButton.interactable = false;
         joinButtonText.text = "Joined";
 
-        GameManager.hostJoin = GameManager.HostJoin.Join;
-        GameManager.roomStatus = GameManager.RoomStatus.InRoom;
+        GameManager.Instance.hostJoin = GameManager.HostJoin.Join;
+        GameManager.Instance.roomStatus = GameManager.RoomStatus.InRoom;
 
         ClearError();
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        GameManager.roomStatus = GameManager.RoomStatus.OutRoom;
+        GameManager.Instance.roomStatus = GameManager.RoomStatus.OutRoom;
 
         switch (returnCode)
         {
@@ -94,7 +94,7 @@ public class JoinMenu : MonoBehaviourPunCallbacks
         joinButton.interactable = true;
         joinButtonText.text = "Join";
 
-        GameManager.roomStatus = GameManager.RoomStatus.OutRoom;
-        GameManager.hostJoin = GameManager.HostJoin.Undefined;
+        GameManager.Instance.roomStatus = GameManager.RoomStatus.OutRoom;
+        GameManager.Instance.hostJoin = GameManager.HostJoin.Undefined;
     }
 }

@@ -53,15 +53,13 @@ public class TimelineSwitcher : MonoBehaviour
             ToggleTimelines();
             if (switchPreview) DisplayPreview(true);
         }
-
-        if (Input.GetKeyDown(KeyCode.T)) Debug.LogError("TEST");
     }
 
     void ToggleTimelines()
     {
         missionCheckView.RPC("Switched", RpcTarget.All);
 
-        if (GameManager.PlayerType.PastPresent == GameManager.playerType)
+        if (GameManager.PlayerType.PastPresent == GameManager.Instance.playerType)
         {
             if (TimelineManager.CurrentTimeline == 0)
             {
@@ -75,7 +73,7 @@ public class TimelineSwitcher : MonoBehaviour
             }
         }
 
-        if (GameManager.PlayerType.FuturePresent == GameManager.playerType)
+        if (GameManager.PlayerType.FuturePresent == GameManager.Instance.playerType)
         {
             if (TimelineManager.CurrentTimeline == 2)
             {
@@ -103,7 +101,7 @@ public class TimelineSwitcher : MonoBehaviour
         {
             vignette.weight = 0.7f;
 
-            if (GameManager.PlayerType.PastPresent == GameManager.playerType)
+            if (GameManager.PlayerType.PastPresent == GameManager.Instance.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 0)
                 {
@@ -117,7 +115,7 @@ public class TimelineSwitcher : MonoBehaviour
                 }
             }
 
-            if (GameManager.PlayerType.FuturePresent == GameManager.playerType)
+            if (GameManager.PlayerType.FuturePresent == GameManager.Instance.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 2)
                 {
@@ -135,7 +133,7 @@ public class TimelineSwitcher : MonoBehaviour
         {
             vignette.weight = 0f;
 
-            if (GameManager.PlayerType.PastPresent == GameManager.playerType)
+            if (GameManager.PlayerType.PastPresent == GameManager.Instance.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 0)
                 {
@@ -147,7 +145,7 @@ public class TimelineSwitcher : MonoBehaviour
                 }
             }
 
-            if (GameManager.PlayerType.FuturePresent == GameManager.playerType)
+            if (GameManager.PlayerType.FuturePresent == GameManager.Instance.playerType)
             {
                 if (TimelineManager.CurrentTimeline == 2)
                 {

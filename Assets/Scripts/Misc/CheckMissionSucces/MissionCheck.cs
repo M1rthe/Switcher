@@ -50,7 +50,7 @@ public class MissionCheck : MonoBehaviour, IOnPlayersSpawned
         winScreen.SetLevelProgress(levelProgress);
 
         StartCoroutine(DisplayWinMessage(delegate{
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            GameManager.Instance.GoTo(GameManager.Location.LevelMenu, 0);
         }));
     }
 

@@ -12,10 +12,10 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.JoinLobby();
 
-        GameManager.hostJoin = GameManager.HostJoin.Undefined;
+        GameManager.Instance.hostJoin = GameManager.HostJoin.Undefined;
     }
 
     //Lobby
-    public override void OnJoinedLobby() { GameManager.lobbyStatus = GameManager.LobbyStatus.InLobby; }
-    public override void OnLeftLobby() { GameManager.lobbyStatus = GameManager.LobbyStatus.OutLobby; }    
+    public override void OnJoinedLobby() { GameManager.Instance.lobbyStatus = GameManager.LobbyStatus.InLobby; }
+    public override void OnLeftLobby() { GameManager.Instance.lobbyStatus = GameManager.LobbyStatus.OutLobby; }    
 }

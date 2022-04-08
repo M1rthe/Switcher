@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 [System.Serializable]
 public class Timeline : MonoBehaviour
 {
+    Transform[] transforms;
     MeshRenderer[] meshRenderers;
     ParticleSystem[] particleSystems;
     Canvas[] canvasses;
@@ -21,6 +22,8 @@ public class Timeline : MonoBehaviour
     {
         defaultMask = gameObject.layer;
         ignorePlayerMask = LayerMask.NameToLayer("IgnorePlayer");
+
+        transforms = GetComponentsInChildren<Transform>();
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
         particleSystems = GetComponentsInChildren<ParticleSystem>();
         canvasses = GetComponentsInChildren<Canvas>();
@@ -30,16 +33,16 @@ public class Timeline : MonoBehaviour
 
     public void Enable(bool enable)
     {
-        foreach (MeshRenderer meshRenderer in meshRenderers)
+        foreach (Transform transform in transforms)
         {
-            if (meshRenderer.CompareTag("Item"))
+            if (transform.CompareTag("Item"))
             {
-                Item item = meshRenderer.GetComponent<Item>();
+                Item item = transform.GetComponent<Item>();
 
                 if (item.inHand)
                 {
                     if (item.type == Item.Type.CurrentTL) item.StartTimeline = TimelineManager.CurrentTimeline; 
-                    if (item.type == Item.Type.OnlyCurrentTL) item.GetComponentInParent<Pickup>().Drop(GameManager.photonPlayer);
+                    if (item.type == Item.Type.OnlyCurrentTL) item.GetComponentInParent<Pickup>().Drop(GameManager.Instance.photonPlayer);
                 }
 
                 item.PhotonView.RPC("UpdateLayer", RpcTarget.All);
@@ -47,11 +50,11 @@ public class Timeline : MonoBehaviour
             else
             {
                 //Visual
-                meshRenderer.enabled = enable;
+                //meshRenderer.enabled = enable;
 
                 //Physics
-                if (enable) meshRenderer.gameObject.layer = defaultMask;
-                else meshRenderer.gameObject.layer = ignorePlayerMask;
+                if (enable) transform.gameObject.layer = defaultMask;
+                else transform.gameObject.layer = ignorePlayerMask;
             }
         }
 
@@ -64,21 +67,21 @@ public class Timeline : MonoBehaviour
             }
         }
 
-        foreach (ParticleSystem particleSystem in particleSystems)
-        {
-            if (enable) particleSystem.Play();
-            else particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        }
+        //foreach (ParticleSystem particleSystem in particleSystems)
+        //{
+        //    if (enable) particleSystem.Play();
+        //    else particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        //}
 
-        foreach (Canvas canvas in canvasses)
-        {
-            canvas.gameObject.SetActive(enable);
-        }
+        //foreach (Canvas canvas in canvasses)
+        //{
+        //    canvas.gameObject.SetActive(enable);
+        //}
 
-        foreach (Volume volume in volumes)
-        {
-            volume.enabled = enable;
-        }
+        //foreach (Volume volume in volumes)
+        //{
+        //    volume.enabled = enable;
+        //}
 
         foreach (Door door in doors)
         {

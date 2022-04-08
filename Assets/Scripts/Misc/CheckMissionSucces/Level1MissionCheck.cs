@@ -9,7 +9,7 @@ public class Level1MissionCheck : MissionCheck
 
     void OnTriggerEnter(Collider other)
     {
-        if (GameManager.hostJoin == GameManager.HostJoin.Host)
+        if (GameManager.Instance.hostJoin == GameManager.HostJoin.Host)
         {
             if (other.transform.gameObject == cat)
             {
