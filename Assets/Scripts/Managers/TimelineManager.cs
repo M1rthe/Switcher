@@ -5,6 +5,8 @@ using Photon.Pun;
 
 public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
 {
+    public static TimelineManager Instance;
+
     //Current timeline
     public static int CurrentTimeline = -1;
     public static int CurrentTimelineOtherPlayer = -1;
@@ -14,13 +16,11 @@ public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
     public static Timeline[] Timelines = new Timeline[3];
 
     //PhotonView
-    public static PhotonView PhotonView;
-
-    public static MonoBehaviour Instance;
+    public PhotonView photonView { get; private set; }
 
     void Awake()
     {
-        PhotonView = GetComponent<PhotonView>();
+        photonView = GetComponent<PhotonView>();
         Instance = this;
     }
 
@@ -30,11 +30,11 @@ public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
         CurrentTimelineOtherPlayer = timeline;
     }
 
-    public static void SetTimeline(int timeline)
+    public void SetTimeline(int timeline)
     {
         //Enable current
         CurrentTimeline = timeline;
-        PhotonView.RPC("SendOtherPlayerYourCurrentTimeline", RpcTarget.Others, timeline);
+        photonView.RPC("SendOtherPlayerYourCurrentTimeline", RpcTarget.Others, timeline);
         Instance.StartCoroutine(WaitForOtherPlayersCurrentTimeline(delegate{
             for (int i = 0; i < Timelines.Length; i++)
             {
