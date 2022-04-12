@@ -50,9 +50,9 @@ public class HostMenu : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (GameManager.Instance.roomStatus == GameManager.RoomStatus.OutRoom)
+        if (GameManager.roomStatus == GameManager.RoomStatus.OutRoom)
         {
-            GameManager.Instance.roomStatus = GameManager.RoomStatus.JoiningRoom;
+            GameManager.roomStatus = GameManager.RoomStatus.JoiningRoom;
 
             //Create room
             RoomOptions roomOptions = new RoomOptions();
@@ -66,32 +66,32 @@ public class HostMenu : MonoBehaviourPunCallbacks
             code.text = id;
             code.gameObject.SetActive(true);
         }
-        else if (GameManager.Instance.roomStatus == GameManager.RoomStatus.InRoom) Debug.LogError("Already entered room");
-        else if (GameManager.Instance.roomStatus == GameManager.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
+        else if (GameManager.roomStatus == GameManager.RoomStatus.InRoom) Debug.LogError("Already entered room");
+        else if (GameManager.roomStatus == GameManager.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
         else Debug.LogError("Still leaving room");
     }
 
     public void Play()
     {
         //Make everyone go to level menu
-        menuManager.photonView.RPC("GoToLevelMenu", RpcTarget.All);
+        menuManager.photonView.RPC("GotoLevelMenu", RpcTarget.All);
     }
 
     public void LeaveRoom()
     {
-        GameManager.Instance.roomStatus = GameManager.RoomStatus.LeavingRoom;
+        GameManager.roomStatus = GameManager.RoomStatus.LeavingRoom;
         PhotonNetwork.LeaveRoom();
         OnLeftRoom();
     }
 
     IEnumerator Wait4OtherPlayers()
     {
-        while (PhotonNetwork.CurrentRoom.PlayerCount < 2 && GameManager.Instance.roomStatus == GameManager.RoomStatus.InRoom)
+        while (PhotonNetwork.CurrentRoom.PlayerCount < 2 && GameManager.roomStatus == GameManager.RoomStatus.InRoom)
         {
             yield return null;
         }
 
-        if (GameManager.Instance.roomStatus == GameManager.RoomStatus.InRoom)
+        if (GameManager.roomStatus == GameManager.RoomStatus.InRoom)
         {
             playButton.interactable = true;
         }
@@ -103,8 +103,8 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
     public override void OnCreatedRoom()
     {
-        GameManager.Instance.roomStatus = GameManager.RoomStatus.InRoom;
-        GameManager.Instance.hostJoin = GameManager.HostJoin.Host;
+        GameManager.roomStatus = GameManager.RoomStatus.InRoom;
+        GameManager.hostJoin = GameManager.HostJoin.Host;
 
         createServerButton.interactable = false; //Cannot create server again
 
@@ -124,8 +124,8 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        GameManager.Instance.roomStatus = GameManager.RoomStatus.OutRoom;
-        GameManager.Instance.hostJoin = GameManager.HostJoin.Undefined;
+        GameManager.roomStatus = GameManager.RoomStatus.OutRoom;
+        GameManager.hostJoin = GameManager.HostJoin.Undefined;
 
         createServerButton.interactable = true;
         playButtonText.text = "Play";

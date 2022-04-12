@@ -61,7 +61,7 @@ public class Item : MonoBehaviour
         itemInvisibleToPlayerLayer = LayerMask.NameToLayer("ItemInvisibleToPlayer");
         itemInvisibleToOtherLayer = LayerMask.NameToLayer("ItemInvisibleToOther");
         itemInvisibleToBothPlayersLayer = LayerMask.NameToLayer("ItemInvisibleToBothPlayers");
-        SetLayerRecursively(gameObject, itemLayer); //Set layer
+        gameObject.layer = itemLayer; //Set layer
 
         //Parent
         startParent = transform.parent; //Get Parent
@@ -71,9 +71,6 @@ public class Item : MonoBehaviour
         //Rigidbody
         rb = GetComponent<Rigidbody>(); //Get rigidbody
         if (rb == null) rb = gameObject.AddComponent<Rigidbody>(); //Add rigidbody
-
-        //Tag
-        gameObject.tag = "Item";
     }
 
     public void RequestOwnership(Photon.Realtime.Player photonPlayer)
@@ -96,41 +93,32 @@ public class Item : MonoBehaviour
 
         SetColorTransparent(false);
 
-        if (invisibleToPlayer) //Invisble to player
+        if (invisibleToPlayer)
         {
             if (type == Type.CurrentTL)
             {
-                SetLayerRecursively(gameObject, itemInvisibleToOtherLayer);
+                gameObject.layer = itemInvisibleToOtherLayer;
                 SetColorTransparent(true);
             }
             if (type == Type.OnlyCurrentTL)
             {
-                SetLayerRecursively(gameObject, itemInvisibleToPlayerLayer);
+                gameObject.layer = itemInvisibleToPlayerLayer;
             }
         }
-
-        if (invisibleToOtherPlayer) //Invisible to other player
-        {
-            SetLayerRecursively(gameObject, itemInvisibleToOtherLayer);
-        }
-
-        if (invisibleToPlayer && invisibleToOtherPlayer) //Invisble to both
+        if (invisibleToOtherPlayer) gameObject.layer = itemInvisibleToOtherLayer;
+        if (invisibleToPlayer && invisibleToOtherPlayer)
         {
             if (type == Type.CurrentTL)
             {
-                SetLayerRecursively(gameObject, itemLayer);
+                gameObject.layer = itemLayer;
                 SetColorTransparent(true);
             }
             if (type == Type.OnlyCurrentTL)
             {
-                SetLayerRecursively(gameObject, itemInvisibleToBothPlayersLayer);
+                gameObject.layer = itemInvisibleToBothPlayersLayer;
             }
         }
-
-        if (!invisibleToPlayer && !invisibleToOtherPlayer) //Visible to both
-        {
-            SetLayerRecursively(gameObject, itemLayer);
-        }
+        if (!invisibleToPlayer && !invisibleToOtherPlayer) gameObject.layer = itemLayer;
     }
 
     public virtual void OnPickup()
@@ -152,12 +140,5 @@ public class Item : MonoBehaviour
             else c.a = 1f;
             meshRenderer.material.SetColor("_BaseColor", c);
         }
-    }
-
-    void SetLayerRecursively(GameObject obj, int newLayer)
-    {
-        obj.layer = newLayer;
-
-        foreach (Transform child in obj.transform) SetLayerRecursively(child.gameObject, newLayer);
     }
 }

@@ -31,7 +31,7 @@ public class LevelMenu : MonoBehaviour
         List<LevelProgress> levelProgress = LevelData.ReadLevelProgresses();
 
         //Loop through levels
-        int sceneCount = GameManager.GetSceneCount();
+        int sceneCount = UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings;
         for (int i = 1; i < sceneCount; i++)
         {
             //Instantiate LevelSelectionBox
@@ -50,14 +50,14 @@ public class LevelMenu : MonoBehaviour
             level.SetLevelProgress(levelProgress[i - 1]);
 
             //Destroy ability to show level selection, when joiner
-            if (GameManager.Instance.hostJoin == GameManager.HostJoin.Join) Destroy(level.transform.GetComponent<UnityEngine.EventSystems.EventTrigger>());
+            if (GameManager.hostJoin == GameManager.HostJoin.Join) Destroy(level.transform.GetComponent<UnityEngine.EventSystems.EventTrigger>());
 
             //Set LevelSelectionBox callback
             int dereferencedI = level.transform.GetSiblingIndex() + 1;
             level.button.onClick.AddListener(
                 delegate
                 {
-                    if (GameManager.Instance.hostJoin == GameManager.HostJoin.Host)
+                    if (GameManager.hostJoin == GameManager.HostJoin.Host)
                     {
                         photonView.RPC("GotoLevel", RpcTarget.All, dereferencedI);
                     }

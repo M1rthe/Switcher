@@ -68,31 +68,23 @@ public class Door : MonoBehaviour, IOnPlayersSpawned
 
     public void TriggerEnter(bool front)
     {
-        if (isOpen)
+        if (isLocked)
         {
-            instructionManager.GiveInstruction("Close door by pressing 'E'");
+            instructionManager.GiveInstruction("Door is locked");
+            return;
         }
-        else
+
+        if (doorType == DoorType.FrontDoor)
         {
-            if (isLocked)
+            if (front)
             {
-                instructionManager.GiveInstruction("Door is locked");
+                instructionManager.GiveInstruction("Door can't be opened from front");
                 return;
             }
-
-            if (doorType == DoorType.FrontDoor)
-            {
-                if (front)
-                {
-                    instructionManager.GiveInstruction("Door can't be opened from front");
-                    return;
-                }
-            }
-
-            instructionManager.GiveInstruction("Open door by pressing 'E'");
         }
 
         checkInput = true;
+        instructionManager.GiveInstruction("Open door by pressing 'E'");
     }
 
     public void TriggerExit(bool front)

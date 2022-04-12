@@ -32,7 +32,7 @@ public class ManagePhotonPlayer : MonoBehaviour
 
         List<StartTimeline> startTimelines = LevelData.ReadStartTimeline();
         StartTimeline startTimeline = startTimelines[GameManager.GetCurrentScene() - 1];
-        if (GameManager.Instance.hostJoin == GameManager.HostJoin.Host) TimelineManager.SetTimeline(startTimeline.p0);
+        if (GameManager.hostJoin == GameManager.HostJoin.Host) TimelineManager.SetTimeline(startTimeline.p0);
         else TimelineManager.SetTimeline(startTimeline.p1);
 
         ConvertToOtherPlayer(!PhotonView.IsMine);
@@ -49,7 +49,7 @@ public class ManagePhotonPlayer : MonoBehaviour
         else
         {
             //Current player
-            GameManager.Instance.photonPlayer = PhotonView.Owner;
+            GameManager.photonPlayer = PhotonView.Owner;
 
             SetLayerRecursively(gameObject, playerLayer); //Player Layer
             cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToOther")); //Culling Mask
@@ -88,8 +88,6 @@ public class ManagePhotonPlayer : MonoBehaviour
 
     void SetLayerRecursively(GameObject obj, int newLayer)
     {
-        if ((~LayerMask.GetMask("Item", "ItemInvisibleToPlayer", "ItemInvisibleToOther", "ItemInvisibleToBothPlayers") & (1 << obj.layer)) != 0) return;
-
         obj.layer = newLayer;
 
         foreach (Transform child in obj.transform) SetLayerRecursively(child.gameObject, newLayer);
