@@ -19,9 +19,6 @@ public class MenuManager : MonoBehaviour
 
     public void GotoMainMenu()
     {
-        Cursor.lockState = CursorLockMode.None; //Cursor
-        Cursor.visible = true;
-
         mainMenu.SetActive(true);
         hostMenu.gameObject.SetActive(false);
         joinMenu.gameObject.SetActive(false);
@@ -30,9 +27,6 @@ public class MenuManager : MonoBehaviour
 
     public void GotoHostServer()
     {
-        Cursor.lockState = CursorLockMode.None; //Cursor
-        Cursor.visible = true;
-
         mainMenu.SetActive(false);
         hostMenu.gameObject.SetActive(true);
         joinMenu.gameObject.SetActive(false);
@@ -41,9 +35,6 @@ public class MenuManager : MonoBehaviour
 
     public void GotoJoinServer()
     {
-        Cursor.lockState = CursorLockMode.None; //Cursor
-        Cursor.visible = true;
-
         mainMenu.SetActive(false);
         hostMenu.gameObject.SetActive(false);
         joinMenu.gameObject.SetActive(true);
@@ -53,14 +44,10 @@ public class MenuManager : MonoBehaviour
     [PunRPC]
     public void GoToLevelMenu()
     {
-        Cursor.lockState = CursorLockMode.None; //Cursor
-        Cursor.visible = GameManager.Instance.hostJoin == GameManager.HostJoin.Host;
-
         mainMenu.SetActive(false);
         hostMenu.gameObject.SetActive(false);
         joinMenu.gameObject.SetActive(false);
         levelMenu.gameObject.SetActive(true);
-        levelMenu.AddLevelUI();
     }
 
     public void Quit()

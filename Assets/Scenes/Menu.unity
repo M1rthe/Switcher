@@ -6213,7 +6213,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents: []
-  sceneViewId: 1
+  sceneViewId: 3
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!1 &703503201
@@ -10180,7 +10180,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuManager: {fileID: 424638152}
-  view: {fileID: 5309715320723933783}
   hostJoin: 2
   roomStatus: 3
   lobbyStatus: 3

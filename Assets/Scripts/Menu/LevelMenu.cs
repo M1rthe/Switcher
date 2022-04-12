@@ -7,22 +7,20 @@ using Photon.Pun;
 public class LevelMenu : MonoBehaviour
 {
     [SerializeField] Object levelSelectionBoxPrefab;
-
-    Transform levelParent;
     List<LevelSelectionBox> levelSelectionBoxes = new List<LevelSelectionBox>();
 
     PhotonView photonView;
 
-    void Awake()
+    void OnEnable()
     {
-        //Get things
-        levelParent = transform.Find("LevelsBackground/Levels");
-        photonView = GetComponent<PhotonView>();
+        AddLevelUI();
     }
 
-    public void AddLevelUI()
+    void AddLevelUI()
     {
         //RESET
+        Transform levelParent = transform.Find("LevelsBackground/Levels");
+        photonView = GetComponent<PhotonView>();
         while (levelParent.childCount > 0) DestroyImmediate(levelParent.GetChild(0).gameObject);
         foreach (LevelSelectionBox selectionBox in levelSelectionBoxes) selectionBox.button.onClick.RemoveAllListeners();
         levelSelectionBoxes.Clear();
@@ -59,7 +57,7 @@ public class LevelMenu : MonoBehaviour
                 {
                     if (GameManager.Instance.hostJoin == GameManager.HostJoin.Host)
                     {
-                        photonView.RPC("GotoLevel", RpcTarget.All, dereferencedI);
+                        GameManager.Instance.photonView.RPC("GoTo", RpcTarget.All, GameManager.Location.Level, dereferencedI);
                     }
                 }
             );
@@ -67,17 +65,6 @@ public class LevelMenu : MonoBehaviour
             //Add to list
             levelSelectionBoxes.Add(level);
         }
-    }
-
-    [PunRPC]
-    public void GotoLevel(int sceneIndex)
-    {
-        //Cursor
-        Cursor.lockState = CursorLockMode.Locked; 
-        Cursor.visible = false;
-
-        //Load scene
-        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
     }
 
     [PunRPC]

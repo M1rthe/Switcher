@@ -4,133 +4,104 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
 
-public class GameManager : MonoBehaviourPunCallbacks
+namespace Photon.Pun
 {
-    //Instance
-    public static GameManager Instance { get; private set; }
-
-    //Managers
-    public MenuManager menuManager = null;
-
-    //Photon
-    public PhotonView view;
-    [HideInInspector] public Photon.Realtime.Player photonPlayer;
-
-    //Network Status
-    public enum HostJoin { Host, Join, Undefined }
-    public HostJoin hostJoin = HostJoin.Undefined;
-    public enum RoomStatus { JoiningRoom, LeavingRoom, InRoom, OutRoom }
-    public RoomStatus roomStatus = RoomStatus.OutRoom;
-    public enum LobbyStatus { JoiningLobby, LeavingLobby, InLobby, OutLobby }
-    public LobbyStatus lobbyStatus = LobbyStatus.OutLobby;
-
-    //Type Player
-    public enum PlayerType { PastPresent, FuturePresent }
-    public PlayerType playerType;
-
-    //Menu
-    public enum Location { MainMenu, HostJoinMenu, LevelMenu, Level }
-    public Location location;
-
-    void Start()
+    public class GameManager : MonoBehaviourPunCallbacks
     {
-        GoTo(Location.MainMenu);
-    }
+        //Instance
+        public static GameManager Instance { get; private set; }
 
-    void Awake()
-    {
-        //Singleton
-        if (Instance == null)
+        //Managers
+        public MenuManager menuManager = null;
+
+        //Photon
+        //public PhotonView view;
+        [HideInInspector] public Realtime.Player photonPlayer;
+
+        //Network Status
+        public enum HostJoin { Host, Join, Undefined }
+        public HostJoin hostJoin = HostJoin.Undefined;
+        public enum RoomStatus { JoiningRoom, LeavingRoom, InRoom, OutRoom }
+        public RoomStatus roomStatus = RoomStatus.OutRoom;
+        public enum LobbyStatus { JoiningLobby, LeavingLobby, InLobby, OutLobby }
+        public LobbyStatus lobbyStatus = LobbyStatus.OutLobby;
+
+        //Type Player
+        public enum PlayerType { PastPresent, FuturePresent }
+        public PlayerType playerType;
+
+        //Menu
+        public enum Location { MainMenu, HostJoinMenu, LevelMenu, Level }
+        public Location location;
+
+        void Start()
         {
-            Instance = this;
-
-            Instance.view = GetComponent<PhotonView>();
-            DontDestroyOnLoad(gameObject);
+            GoTo(Location.MainMenu, 0);
         }
-        else
+
+        [PunRPC]
+        private void Destroy()
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
-    }
 
-    public static int GetCurrentScene() { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; }
-
-    public static int GetSceneCount() { return UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings; }
-
-    [PunRPC]
-    public void GoTo(Location l, int sceneIndex = 0)
-    {
-        location = l;
-
-        if (sceneIndex != GetCurrentScene()) UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
-        
-        if (sceneIndex != 0) return;
-
-        StartCoroutine(OnSceneLoaded(sceneIndex, delegate {
-
-            menuManager = FindObjectOfType<MenuManager>();
-
-            switch (location)
+        void Awake()
+        {
+            if (Instance != null && Instance != this)
             {
-                case Location.MainMenu:
-                    menuManager.GotoMainMenu();
-                    break;
-                case Location.HostJoinMenu:
-                    if (hostJoin == HostJoin.Host) menuManager.GotoHostServer();
-                    if (hostJoin == HostJoin.Join) menuManager.GotoJoinServer();
-                    break;
-                case Location.LevelMenu:
-                    menuManager.GoToLevelMenu();
-                    break;
-                default:
-                    break;
+                Debug.LogError("Destroy duplicate: " + gameObject.name);
+                Destroy(this.gameObject);
             }
-        }));
-    }
-
-    IEnumerator OnSceneLoaded(int sceneIndex, UnityAction unityAction)
-    {
-        while (UnityEngine.SceneManagement.SceneManager.GetSceneByBuildIndex(sceneIndex).isLoaded == false)
-        {
-            yield return null;
+            else
+            {
+                Instance = this;
+                Debug.LogError("Instantiate " + gameObject.name);
+                DontDestroyOnLoad(gameObject);
+            }
         }
 
-        unityAction.Invoke();
-    }
+        public static int GetCurrentScene() { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        public static int GetSceneCount() { return UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings; }
+
+        [PunRPC]
+        public void GoTo(Location l, int sceneIndex = 0)
         {
-            if (location == Location.Level)
+            location = l;
+            Debug.LogError("Go To "+l.ToString());
+
+            if (sceneIndex != GetCurrentScene())
             {
-                view.RPC("GoToMenu", RpcTarget.All, Location.LevelMenu);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
             }
-            else //Menu
+
+            if (sceneIndex == 0)
             {
-                if (roomStatus != RoomStatus.OutRoom)
+                StartCoroutine(OnSceneLoaded(sceneIndex, delegate
                 {
-                    //Leave room
-                    if (hostJoin != HostJoin.Undefined)
+                    Debug.LogError("Loaded scene " + sceneIndex + ", goto: "+ location.ToString());
+
+                    menuManager = FindObjectOfType<MenuManager>();
+
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+
+                    switch (location)
                     {
-                        //Make every client go back
-                        menuManager.photonView.RPC("LeaveAndGoBack", RpcTarget.All, hostJoin == HostJoin.Host);
+                        case Location.MainMenu:
+                            menuManager.GotoMainMenu();
+                            break;
+                        case Location.HostJoinMenu:
+                            if (hostJoin == HostJoin.Host) menuManager.GotoHostServer();
+                            if (hostJoin == HostJoin.Join) menuManager.GotoJoinServer();
+                            break;
+                        case Location.LevelMenu:
+                            menuManager.GoToLevelMenu();
+                            break;
+                        default:
+                            break;
                     }
-                }
-                else
-                {
-                    //Go back when nobody joined yet
-                    menuManager.GotoMainMenu();
-                }
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (Cursor.lockState != CursorLockMode.None)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                }));
             }
             else
             {
@@ -139,18 +110,77 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.F11))
+        IEnumerator OnSceneLoaded(int sceneIndex, UnityAction unityAction)
         {
-            if (Screen.fullScreen)
+            while (UnityEngine.SceneManagement.SceneManager.GetSceneByBuildIndex(sceneIndex).isLoaded == false)
             {
-                Screen.fullScreen = false;
-                if (Cursor.lockState == CursorLockMode.Confined) Cursor.lockState = CursorLockMode.None;
+                yield return null;
             }
-            else
+
+            unityAction.Invoke();
+        }
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Screen.fullScreen = true;
-                if (Cursor.lockState == CursorLockMode.None) Cursor.lockState = CursorLockMode.Confined;
+                if (location == Location.Level)
+                {
+                    Debug.LogError("Go to level menu!!!!!");
+                    photonView.RPC("GoTo", RpcTarget.All, Location.LevelMenu, 0);
+                    photonView.RPC("Destroy", RpcTarget.All);
+                }
+                else //Menu
+                {
+                    if (roomStatus != RoomStatus.OutRoom)
+                    {
+                        //Leave room
+                        if (hostJoin != HostJoin.Undefined)
+                        {
+                            //Make every client go back
+                            menuManager.photonView.RPC("LeaveAndGoBack", RpcTarget.All, hostJoin == HostJoin.Host);
+                        }
+                    }
+                    else
+                    {
+                        //Go back when nobody joined yet
+                        menuManager.GotoMainMenu();
+                    }
+                }
             }
+
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                if (Cursor.lockState != CursorLockMode.None)
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.F11))
+            {
+                if (Screen.fullScreen)
+                {
+                    Screen.fullScreen = false;
+                    if (Cursor.lockState == CursorLockMode.Confined) Cursor.lockState = CursorLockMode.None;
+                }
+                else
+                {
+                    Screen.fullScreen = true;
+                    if (Cursor.lockState == CursorLockMode.None) Cursor.lockState = CursorLockMode.Confined;
+                }
+            }
+        }
+
+        public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
+        {
+            GoTo(Location.HostJoinMenu, 0);
         }
     }
 }

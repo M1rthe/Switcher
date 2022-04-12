@@ -39,6 +39,8 @@ public class HostMenu : MonoBehaviourPunCallbacks
     {
         error.text = "";
         error.gameObject.SetActive(false);
+
+        code.gameObject.SetActive(false);
     }
 
     public void CreateRoom(InputField username)
@@ -142,9 +144,9 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        Debug.LogError(otherPlayer.NickName+" left room");
         //Update playercount on Play button
         playButtonText.text = "Play (" + PhotonNetwork.CurrentRoom.PlayerCount + "/2 players)";
+        code.gameObject.SetActive(true);
         UpdatePlayButtonInteractable();
     }
 

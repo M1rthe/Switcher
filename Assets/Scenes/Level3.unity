@@ -10671,17 +10671,10 @@ MonoBehaviour:
   itemName: Cube
   positionOffset: {x: 0, y: 0, z: 0}
   rotationOffset: {x: 0, y: 0, z: 0}
-  timelineExistance: 1
-  startTimeline: 0
-  itemTypeLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  itemHeldTypeLayer:
-    serializedVersion: 2
-    m_Bits: 0
   rb: {fileID: 0}
   startParent: {fileID: 0}
   inHand: 0
+  type: 0
 --- !u!1 &928525992
 GameObject:
   m_ObjectHideFlags: 0
@@ -15539,7 +15532,6 @@ GameObject:
   m_Component:
   - component: {fileID: 948875308}
   - component: {fileID: 948875307}
-  - component: {fileID: 948875306}
   - component: {fileID: 948875305}
   m_Layer: 0
   m_Name: Managers
@@ -15570,18 +15562,6 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &948875306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 948875304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04bd4388874b7724da14178eae2ebcd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &948875307
 MonoBehaviour:
   m_ObjectHideFlags: 0
