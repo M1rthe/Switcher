@@ -7,7 +7,6 @@ using Photon.Pun;
 public class SpawnPlayers : MonoBehaviour
 {
     [SerializeField] Object playerPrefab;
-    Transform spawnPositions;
 
     void Awake()
     {
@@ -19,15 +18,14 @@ public class SpawnPlayers : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         //Set spawnpoint
-        spawnPositions = transform.Find("SpawnPositions").transform;
         int index = System.Convert.ToInt32(GameManager.hostJoin == GameManager.HostJoin.Host);
-        Vector3 spawnPosition = spawnPositions.GetChild(index).position;
+        GameManager.spawnPoint = transform.Find("SpawnPositions").transform.GetChild(index);
 
         // (past) | present | (future)
         GameManager.playerType = (GameManager.PlayerType)index;
 
         //Instantiate
-        GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity);
+        GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, GameManager.spawnPoint.position, GameManager.spawnPoint.rotation);
 
         //Color
         if (GameManager.hostJoin == GameManager.HostJoin.Host)

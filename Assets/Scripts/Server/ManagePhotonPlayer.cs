@@ -53,6 +53,7 @@ public class ManagePhotonPlayer : MonoBehaviour
 
             SetLayerRecursively(gameObject, playerLayer); //Player Layer
             cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToOther")); //Culling Mask
+            GameManager.hud = transform.GetComponentInChildren<HUD>();
         }
 
         //Turn off the extra components
@@ -88,6 +89,8 @@ public class ManagePhotonPlayer : MonoBehaviour
 
     void SetLayerRecursively(GameObject obj, int newLayer)
     {
+        if ((~LayerMask.GetMask("Item", "ItemInvisibleToPlayer", "ItemInvisibleToOther", "ItemInvisibleToBothPlayers") & (1 << obj.layer)) != 0) return;
+
         obj.layer = newLayer;
 
         foreach (Transform child in obj.transform) SetLayerRecursively(child.gameObject, newLayer);
