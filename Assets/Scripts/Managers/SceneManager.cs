@@ -6,16 +6,9 @@ using Photon.Realtime;
 
 public sealed class SceneManager : MonoBehaviourPunCallbacks
 {
-    PhotonView photonView;
-
-    void Start()
-    {
-        photonView = GetComponent<PhotonView>();
-    }
-
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && Time.timeSinceLevelLoad > 0.5)
         {
             photonView.RPC("GotoMenu", RpcTarget.All);
         }
