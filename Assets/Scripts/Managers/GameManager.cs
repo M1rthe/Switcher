@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     //Instance
-    public static GameManager instance;
+    public static GameManager Instance { get; private set; }
 
     //Photon Player
     public static Photon.Realtime.Player photonPlayer;
@@ -28,13 +28,13 @@ public class GameManager : MonoBehaviour
     //SINGLETON
     void Awake()
     {
-        if (instance != null && instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
         }
         else
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
     }
