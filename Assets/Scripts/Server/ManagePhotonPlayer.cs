@@ -6,7 +6,7 @@ using Photon.Realtime;
 
 public class ManagePhotonPlayer : MonoBehaviour
 {
-    public PhotonView PhotonView { get; set; }
+    public PhotonView photonView { get; private set; }
     Camera cam;
 
     [SerializeField] List<Behaviour> components = new List<Behaviour>();
@@ -21,7 +21,7 @@ public class ManagePhotonPlayer : MonoBehaviour
 
     void Awake()
     {
-        PhotonView = GetComponent<PhotonView>();
+        photonView = GetComponent<PhotonView>();
         cam = GetComponentInChildren<Camera>();
         body = transform.Find("PlayerModel/Body").GetComponent<MeshRenderer>();
 
@@ -32,10 +32,10 @@ public class ManagePhotonPlayer : MonoBehaviour
 
         List<StartTimeline> startTimelines = LevelData.ReadStartTimeline();
         StartTimeline startTimeline = startTimelines[GameManager.GetCurrentScene() - 1];
-        if (GameManager.hostJoin == GameManager.HostJoin.Host) TimelineManager.SetTimeline(startTimeline.p0);
-        else TimelineManager.SetTimeline(startTimeline.p1);
+        if (GameManager.hostJoin == GameManager.HostJoin.Host) TimelineManager.Instance.SetTimeline(startTimeline.p0);
+        else TimelineManager.Instance.SetTimeline(startTimeline.p1);
 
-        ConvertToOtherPlayer(!PhotonView.IsMine);
+        ConvertToOtherPlayer(!photonView.IsMine);
     }
 
     void ConvertToOtherPlayer(bool isOtherPlayer)
@@ -49,7 +49,7 @@ public class ManagePhotonPlayer : MonoBehaviour
         else
         {
             //Current player
-            GameManager.photonPlayer = PhotonView.Owner;
+            GameManager.photonPlayer = photonView.Owner;
 
             SetLayerRecursively(gameObject, playerLayer); //Player Layer
             cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToOther")); //Culling Mask
