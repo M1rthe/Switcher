@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: Volume
+  m_Name: Vignette
   m_EditorClassIdentifier: 
   components:
-  - {fileID: 5791758308390278975}
---- !u!114 &5791758308390278975
+  - {fileID: 1543662110437785808}
+--- !u!114 &1543662110437785808
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,17 +42,17 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.616
+    m_Value: 0.552
     min: 0
     max: 1
   smoothness:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.482
     min: 0.01
     max: 1
   roundness:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.689
     min: 0
     max: 1
   rounded:
