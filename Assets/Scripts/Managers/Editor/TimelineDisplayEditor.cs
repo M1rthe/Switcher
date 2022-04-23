@@ -1,21 +1,23 @@
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Rendering;
 
 public class TimelineDisplayEditor : EditorWindow
 {
+    bool useEditor = false;
     GameObject past = null;
     GameObject present = null;
     GameObject future = null;
 
-    [MenuItem("Window/Timeline Switcher")]
+    [MenuItem("CustomWindows/Timeline Switcher")]
 
     public static void ShowWindow()
     {
-        EditorWindow.GetWindow(typeof(TimelineDisplayEditor));
+        GetWindow(typeof(TimelineDisplayEditor));
     }
 
     void OnGUI()
@@ -23,61 +25,65 @@ public class TimelineDisplayEditor : EditorWindow
         GUILayout.Space(15);
 
         GUILayout.Label("Switch Timeline:", EditorStyles.boldLabel);
+        useEditor = GUILayout.Toggle(useEditor, "Use editor: ");
 
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Everything (build)"))
+        if (useEditor)
         {
-            CheckNULL();
-
-            if (past != null && present != null && future != null)
+            if (GUILayout.Button("Everything (build)"))
             {
-                Enable(past, true);
-                Enable(present, true);
-                Enable(future, true);
+                GetTimelineGO();
+
+                if (past != null && present != null && future != null)
+                {
+                    Enable(past, true);
+                    Enable(present, true);
+                    Enable(future, true);
+                }
             }
-        }
 
-        GUILayout.Space(10);
+            GUILayout.Space(10);
 
-        if (GUILayout.Button("Past"))
-        {
-            CheckNULL();
-
-            if (past != null && present != null && future != null)
+            if (GUILayout.Button("Past"))
             {
-                Enable(past, true);
-                Enable(present, false);
-                Enable(future, false);
+                GetTimelineGO();
+
+                if (past != null && present != null && future != null)
+                {
+                    Enable(past, true);
+                    Enable(present, false);
+                    Enable(future, false);
+                }
             }
-        }
 
-        GUILayout.Space(3);
+            GUILayout.Space(3);
 
-        if (GUILayout.Button("Present"))
-        {
-            CheckNULL();
-
-            if (past != null && present != null && future != null)
+            if (GUILayout.Button("Present"))
             {
-                Enable(past, false);
-                Enable(present, true);
-                Enable(future, false);
+                GetTimelineGO();
+
+                if (past != null && present != null && future != null)
+                {
+                    Enable(past, false);
+                    Enable(present, true);
+                    Enable(future, false);
+                }
             }
-        }
 
-        GUILayout.Space(3);
+            GUILayout.Space(3);
 
-        if (GUILayout.Button("Future"))
-        {
-            CheckNULL();
-
-            if (past != null && present != null && future != null)
+            if (GUILayout.Button("Future"))
             {
-                Enable(past, false);
-                Enable(present, false);
-                Enable(future, true);
-            } 
+                GetTimelineGO();
+
+                if (past != null && present != null && future != null)
+                {
+                    Enable(past, false);
+                    Enable(present, false);
+                    Enable(future, true);
+                }
+            }
         }
     }
 
@@ -87,6 +93,7 @@ public class TimelineDisplayEditor : EditorWindow
         ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
         Canvas[] canvasses = gameObject.GetComponentsInChildren<Canvas>();
         Light[] lights = gameObject.GetComponentsInChildren<Light>();
+        Volume[] volumes = gameObject.GetComponentsInChildren<Volume>();
 
         foreach (MeshRenderer meshRenderer in meshRenderers)
         {
@@ -111,22 +118,19 @@ public class TimelineDisplayEditor : EditorWindow
         {
             light.enabled = enable;
         }
+
+        foreach (Volume volume in volumes)
+        {
+            volume.enabled = enable;
+        }
     }
 
-    void CheckNULL()
+    void GetTimelineGO()
     {
-        if (past == null || present == null || future == null)
-        {
-            Transform[] transforms = Resources.FindObjectsOfTypeAll<Transform>();
-
-            foreach (Transform transform in transforms)
-            {
-                if (transform.tag == "Past") past = transform.gameObject;
-                if (transform.tag == "Present") present = transform.gameObject;
-                if (transform.tag == "Future") future = transform.gameObject;
-            }
-        }
+        past = GameObject.FindGameObjectWithTag("Past");
+        present = GameObject.FindGameObjectWithTag("Present");
+        future = GameObject.FindGameObjectWithTag("Future");
     }
 }
 
-//#endif
+#endif
