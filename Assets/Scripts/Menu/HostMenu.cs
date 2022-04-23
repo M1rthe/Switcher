@@ -52,6 +52,8 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
         if (GameManager.roomStatus == GameManager.RoomStatus.OutRoom)
         {
+            menuManager.loadWheel.Load = true;
+
             GameManager.roomStatus = GameManager.RoomStatus.JoiningRoom;
 
             //Create room
@@ -60,11 +62,10 @@ public class HostMenu : MonoBehaviourPunCallbacks
             PhotonNetwork.NickName = username.text; //Nickname
             string id = System.Guid.NewGuid().ToString("N"); //Generate code
             PhotonNetwork.CreateRoom(id, roomOptions); //Create Photon Room
-            GUIUtility.systemCopyBuffer = id;
+            //GUIUtility.systemCopyBuffer = id;
 
             //UI
             code.text = id;
-            code.gameObject.SetActive(true);
         }
         else if (GameManager.roomStatus == GameManager.RoomStatus.InRoom) Debug.LogError("Already entered room");
         else if (GameManager.roomStatus == GameManager.RoomStatus.JoiningRoom) Debug.LogError("Already joining room");
@@ -108,8 +109,11 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
         createServerButton.interactable = false; //Cannot create server again
 
+        code.gameObject.SetActive(true);
+
         //Change button text
         playButtonText.text = "Play (" + PhotonNetwork.CurrentRoom.PlayerCount + "/2 players)";
+        menuManager.loadWheel.Load = false;
 
         //Wait for other players
         StartCoroutine("Wait4OtherPlayers");
@@ -129,6 +133,7 @@ public class HostMenu : MonoBehaviourPunCallbacks
 
         createServerButton.interactable = true;
         playButtonText.text = "Play";
+        code.gameObject.SetActive(false);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)

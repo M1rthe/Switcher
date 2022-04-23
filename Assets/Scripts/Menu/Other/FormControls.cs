@@ -67,12 +67,12 @@ public class FormControls : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (currentInputfield != -1)
-            {
-                inputFields[currentInputfield].text = GUIUtility.systemCopyBuffer;
-            }
-        }
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    if (currentInputfield != -1)
+        //    {
+        //        inputFields[currentInputfield].text = GUIUtility.systemCopyBuffer;
+        //    }
+        //}
     }
 }

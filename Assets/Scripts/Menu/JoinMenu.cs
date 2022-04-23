@@ -43,6 +43,7 @@ public class JoinMenu : MonoBehaviourPunCallbacks
             GameManager.roomStatus = GameManager.RoomStatus.JoiningRoom;
 
             //Join room
+            menuManager.loadWheel.Load = true;
             PhotonNetwork.JoinRoom(codeInputfield.text);
             PhotonNetwork.NickName = usernameInputfield.text; //Nickname
         }
@@ -70,12 +71,15 @@ public class JoinMenu : MonoBehaviourPunCallbacks
         GameManager.hostJoin = GameManager.HostJoin.Join;
         GameManager.roomStatus = GameManager.RoomStatus.InRoom;
 
+        menuManager.loadWheel.Load = false;
+
         ClearError();
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         GameManager.roomStatus = GameManager.RoomStatus.OutRoom;
+        menuManager.loadWheel.Load = false;
 
         switch (returnCode)
         {
