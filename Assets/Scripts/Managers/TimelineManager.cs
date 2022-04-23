@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System.Linq;
 
 public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
 {
@@ -22,18 +23,35 @@ public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
     {
         photonView = GetComponent<PhotonView>();
         Instance = this;
+
+        CurrentTimeline = -1;
+        CurrentTimelineOtherPlayer = -1;
     }
 
     [PunRPC]
     public void SendOtherPlayerYourCurrentTimeline(int timeline)
     {
+        bool firstTime = CurrentTimelineOtherPlayer == -1;
+
         CurrentTimelineOtherPlayer = timeline;
+
+        var onSwitchedTimelines = FindObjectsOfType<MonoBehaviour>().OfType<IOnSwitchedTimeline>();
+        foreach (IOnSwitchedTimeline onSwitchedTimeline in onSwitchedTimelines)
+        {
+            onSwitchedTimeline.OnOtherPlayerSwitched(firstTime);
+        }
     }
 
     public void SetTimeline(int timeline)
     {
         //Enable current
         CurrentTimeline = timeline;
+        var onSwitchedTimelines = FindObjectsOfType<MonoBehaviour>().OfType<IOnSwitchedTimeline>();
+        foreach (IOnSwitchedTimeline onSwitchedTimeline in onSwitchedTimelines)
+        {
+            onSwitchedTimeline.OnPlayerSwitched();
+        }
+
         photonView.RPC("SendOtherPlayerYourCurrentTimeline", RpcTarget.Others, timeline);
         Instance.StartCoroutine(WaitForOtherPlayersCurrentTimeline(delegate{
             for (int i = 0; i < Timelines.Length; i++)
@@ -73,5 +91,18 @@ public class TimelineManager : MonoBehaviour, ISerializationCallbackReceiver
     public void OnAfterDeserialize()
     {
         Timelines = timelines;
+    }
+
+    public static int GetTimelineOf(GameObject go)
+    {
+        Timeline timeline = go.GetComponent<Timeline>();
+        if (timeline != null)
+        {
+            return go.transform.GetSiblingIndex();
+        }
+
+        Transform parentTransform = go.transform.parent;
+        if (parentTransform == null) return -1;
+        return GetTimelineOf(parentTransform.gameObject);
     }
 }

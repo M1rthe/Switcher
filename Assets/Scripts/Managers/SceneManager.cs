@@ -24,5 +24,6 @@ public sealed class SceneManager : MonoBehaviourPunCallbacks
     {
         //FIND A WAY TO GO TO HOST/JOIN MENU AFTER SWITCHING SCENES
         photonView.RPC("GotoMenu", RpcTarget.All);
+        GameManager.roomStatus = GameManager.RoomStatus.LeavingRoom;
     }
 }

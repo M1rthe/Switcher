@@ -21,6 +21,7 @@ public class MissionManager : MonoBehaviour
 
         //Get level info of current level, set text 
         LevelObjective currentLevel = levelInfos[UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex - 1];
+        if (currentLevel.story == "-" || currentLevel.story == "") storyText.transform.parent.gameObject.SetActive(false);
         storyText.text = currentLevel.story;
         missionText.text = currentLevel.mission;
     }

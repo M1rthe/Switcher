@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     //Instance
     public static GameManager Instance { get; private set; }
 
+    public AnimationCurve lightFlareCurve;
+
     //Photon Player
     public static Photon.Realtime.Player photonPlayer;
 
@@ -24,6 +26,10 @@ public class GameManager : MonoBehaviour
     //Type Player
     public enum PlayerType { PastPresent, FuturePresent }
     public static PlayerType playerType;
+
+    public static GameObject player;
+    public static HUD hud;
+    public static Transform spawnPoint;
 
     //SINGLETON
     void Awake()
@@ -68,5 +74,39 @@ public class GameManager : MonoBehaviour
                 if (Cursor.lockState == CursorLockMode.None) Cursor.lockState = CursorLockMode.Confined;
             }
         }
+    }
+
+    public static Component GetComponentInParentRecursively(GameObject go, System.Type type)
+    {
+        Component component = go.GetComponent(type);
+        if (component != null)
+        {
+            return component;
+        }
+        else
+        {
+            if (go.transform.parent != null)
+            {
+                return GetComponentInParentRecursively(go.transform.parent.gameObject, type);
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public static GameObject FindChildWithTag(GameObject parent, string tag)
+    {
+        Transform t = parent.transform;
+        foreach (Transform tr in t)
+        {
+            if (tr.tag == tag)
+            {
+                return tr.gameObject;
+            }
+        }
+
+        return null;
     }
 }

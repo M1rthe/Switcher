@@ -12,12 +12,30 @@ public class MenuManager : MonoBehaviour
     [SerializeField] JoinMenu joinMenu;
     [SerializeField] LevelMenu levelMenu;
 
+    [Space]
+
+    public LoadWheel loadWheel;
+
     void Start()
     {
         photonView = GetComponent<PhotonView>();
 
-        if (Time.frameCount < 10) { GotoMainMenu(); }
-        else { GotoLevelMenu(); }
+        if (Time.frameCount < 10) 
+        {
+            Debug.LogError("GotoMainMenu");
+            GotoMainMenu(); 
+        }
+        else if (GameManager.roomStatus == GameManager.RoomStatus.InRoom)
+        {
+            Debug.LogError("GotoLevelMenu");
+            GotoLevelMenu();
+        }
+        else 
+        {
+            Debug.LogError("Escape");
+            GotoLevelMenu();
+            Escape();
+        }
 
         //Cursor
         Cursor.lockState = CursorLockMode.None;
@@ -27,23 +45,28 @@ public class MenuManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            hostMenu.ClearError();
-            joinMenu.ClearError();
+            Escape();
+        }
+    }
 
-            if (GameManager.roomStatus != GameManager.RoomStatus.OutRoom)
+    void Escape()
+    {
+        hostMenu.ClearError();
+        joinMenu.ClearError();
+
+        if (GameManager.roomStatus != GameManager.RoomStatus.OutRoom)
+        {
+            //Leave room
+            if (GameManager.hostJoin != GameManager.HostJoin.Undefined)
             {
-                //Leave room
-                if (GameManager.hostJoin != GameManager.HostJoin.Undefined)
-                {
-                    //Make every client go back
-                    photonView.RPC("GoBack", RpcTarget.All, GameManager.hostJoin == GameManager.HostJoin.Host);
-                }
+                //Make every client go back
+                photonView.RPC("GoBack", RpcTarget.All, GameManager.hostJoin == GameManager.HostJoin.Host);
             }
-            else
-            {
-                //Go back when nobody joined yet
-                GotoMainMenu();
-            }
+        }
+        else
+        {
+            //Go back when nobody joined yet
+            GotoMainMenu();
         }
     }
 
@@ -55,6 +78,7 @@ public class MenuManager : MonoBehaviour
 
     IEnumerator Wait4GoBack(bool leave = true)
     {
+        Debug.LogError("Wait4GoBack");
         GameManager.HostJoin hj = GameManager.hostJoin; //Because set to unidentified onLeft
 
         if (leave && hj == GameManager.HostJoin.Host) { hostMenu.LeaveRoom(); }
@@ -64,6 +88,8 @@ public class MenuManager : MonoBehaviour
         {
             yield return null;
         }
+
+        Debug.LogError("GotoHostServer/GotoJoinServer");
 
         if (levelMenu.gameObject.activeSelf ||
         hostMenu.gameObject.activeSelf ||
@@ -87,6 +113,8 @@ public class MenuManager : MonoBehaviour
 
     public void Quit()
     {
+        loadWheel.Load = true;
+
         #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
         #endif
@@ -101,10 +129,14 @@ public class MenuManager : MonoBehaviour
 
     IEnumerator Wait4GotoHostServer()
     {
+        loadWheel.Load = true;
+
         while (GameManager.lobbyStatus != GameManager.LobbyStatus.InLobby)
         {
             yield return null;
         }
+
+        loadWheel.Load = false;
 
         mainMenu.SetActive(false);
         hostMenu.gameObject.SetActive(true);

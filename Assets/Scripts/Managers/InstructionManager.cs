@@ -23,10 +23,20 @@ public class InstructionManager : MonoBehaviour
         if (duration > 0) StartCoroutine(Wait(duration, delegate { PullInstructionAway(); })); //Wait  
     }
 
-    public void PullInstructionAway()
+    public void PullInstructionAway(bool instantly = false)
     {
-        anim.Play("FlyOut");
-        StartCoroutine(OnAnimationFinish(delegate { msg.text = ""; })); //Reset text
+        if (instantly)
+        {
+            anim.Rewind("FlyIn");
+            anim.Play("FlyIn");
+            anim.Sample();
+            anim.Stop("FlyIn");
+        }
+        else
+        {
+            anim.Play("FlyOut");
+            StartCoroutine(OnAnimationFinish(delegate { msg.text = ""; })); //Reset text
+        }
     }
 
     IEnumerator Wait(float duration, System.Action action)
