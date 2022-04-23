@@ -6,10 +6,10 @@ TagManager:
   tags:
   - Past
   - Future
-  - Item
-  - Addition
   - Present
-  - Slippery
+  - Rain
+  - Addition
+  - Item
   layers:
   - Default
   - TransparentFX
@@ -25,11 +25,11 @@ TagManager:
   - OtherPlayer
   - GhostPlayer
   - OtherGhostPlayer
-  - Item
-  - ItemInvisibleToBothPlayers
-  - ItemInvisibleToOther
-  - ItemInvisibleToPlayer
-  - 
+  - ItemPlayer
+  - ItemOtherPlayer
+  - ItemBothPlayers
+  - ItemNeitherPlayers
+  - Terrain
   - 
   - 
   - 
