@@ -56,6 +56,13 @@ MonoBehaviour:
   - OpenDoor
   - Switched
   - Succes
+  - PutInGround
+  - Pour
+  - FillUp
+  - Chop
+  - SetIsDead
+  - IsCutDown
+  - StartTimelineSwitched
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -6,11 +6,15 @@ public class Pickup : MonoBehaviour
     [SerializeField] float reachDistance = 4f;
     [HideInInspector] public Item itemHolding = null;
 
-    PhotonView photonView;
+    [HideInInspector] public PhotonView photonView;
+
+    Camera cam;
 
     void Start()
     {
         photonView = GetComponent<PhotonView>();
+
+        cam = GetComponentInParent<Camera>();
     }
 
     void Update()
@@ -20,16 +24,19 @@ public class Pickup : MonoBehaviour
             //Pickup
             if (Input.GetMouseButtonDown(0))
             {
-                //Raycast check
-                RaycastHit hit;
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, reachDistance))
+                if (itemHolding == null)
                 {
-                    //Hit item component
-                    Item item = hit.transform.GetComponent<Item>();
-                    if (item != null)
+                    //Raycast check
+                    RaycastHit hit;
+                    if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit, reachDistance))
                     {
-                        //Let this player pickup this item for every player
-                        photonView.RPC("PickUp", RpcTarget.All, GameManager.photonPlayer, item.PhotonView.ViewID);
+                        //Hit item component
+                        Item item = hit.transform.GetComponent<Item>();
+                        if (item != null)
+                        {
+                            //Let this player pickup this item for every player
+                            photonView.RPC("PickUp", RpcTarget.All, GameManager.photonPlayer, item.PhotonView.ViewID);
+                        }
                     }
                 }
             }
@@ -42,7 +49,7 @@ public class Pickup : MonoBehaviour
                     if (!DropsInWall()) //WallCheck
                     {
                         //Let this player drop for all players
-                        photonView.RPC("Drop", RpcTarget.All, GameManager.photonPlayer);
+                        photonView.RPC("Drop", RpcTarget.All, GameManager.photonPlayer, itemHolding.transform.position, itemHolding.transform.eulerAngles);
                     }
                 }
             }
@@ -55,8 +62,6 @@ public class Pickup : MonoBehaviour
         //Get item by id
         Item item = PhotonNetwork.GetPhotonView(id).GetComponent<Item>();
 
-        item.OnPickup(); //Event
-
         item.RequestOwnership(owner); //Ownership
 
         item.rb.isKinematic = true; //Rigidbody
@@ -66,28 +71,35 @@ public class Pickup : MonoBehaviour
         item.transform.localPosition = item.positionOffset; //Position
         item.transform.localEulerAngles = item.rotationOffset; //Rotation
 
-        itemHolding = item; 
+        item.OnPickup(); //Event
+
+        itemHolding = item;
     }
 
     [PunRPC]
-    public void Drop(Photon.Realtime.Player owner)
+    public void Drop(Photon.Realtime.Player owner, Vector3 pos, Vector3 rot)
     {
-        itemHolding.OnDrop(); //Event
+        itemHolding.transform.position = pos;
+        itemHolding.transform.eulerAngles = rot;
+
         itemHolding.rb.isKinematic = false; //Rigidbody
         itemHolding.transform.SetParent(itemHolding.startParent); //Reset parent
+
+        itemHolding.OnDrop(); //Event
+
         itemHolding = null; //Set null
     }
 
     bool DropsInWall()
     {
         //Send ray
-        RaycastHit raycastHit;
         Vector3 raycastPosition = itemHolding.transform.parent.parent.position; //Raypos
         raycastPosition += itemHolding.transform.parent.localPosition.x * itemHolding.transform.parent.right; //Offset
         Ray ray = new Ray(raycastPosition, itemHolding.transform.parent.forward);
-        if (Physics.Raycast(ray, out raycastHit, 5f, ~LayerMask.GetMask("Item", "ItemInvisibleToPlayer", "ItemInvisibleToOther", "ItemInvisibleToBothPlayers")))
+        RaycastHit[] raycastHits = Physics.RaycastAll(ray, 5f, ~LayerMask.GetMask("ItemPlayer", "ItemOtherPlayer", "ItemBothPlayers", "ItemNeitherPlayers"));
+        foreach (RaycastHit hit in raycastHits)
         {
-            if (raycastHit.distance < itemHolding.transform.parent.localPosition.z)
+            if (hit.distance < itemHolding.transform.parent.localPosition.z && hit.collider.isTrigger == false)
             {
                 //Cancel drop when item is in wall
                 return true;

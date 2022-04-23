@@ -18,7 +18,6 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump")]
     [SerializeField] float jumpforce = 1.2f;
-    [SerializeField] float jumpHeighForce = 1.5f;
     [SerializeField] float gravity = -5f;
     float verticalSpeed;
 
@@ -56,7 +55,9 @@ public class PlayerMovement : MonoBehaviour
     void Move()
     {
         // X & Z
+        float sprint = Input.GetKey(sprintKey) ? sprintMultiplier : 1; // Sprint
         move = (transform.right * Input.GetAxis("Horizontal")) + (transform.up) + (transform.forward * Input.GetAxis("Vertical"));
+        move *= sprint;
 
         //Y
         if (characterController.isGrounded)
@@ -72,20 +73,18 @@ public class PlayerMovement : MonoBehaviour
             move = lastMove;
         }
 
-        float sprint = Input.GetKey(sprintKey) ? sprintMultiplier : 1; // Sprint
-
-        move.y = verticalSpeed * jumpHeighForce;
-        characterController.Move(move * walkSpeed * sprint * Time.deltaTime);
+        move.y = verticalSpeed;
+        characterController.Move(move * walkSpeed * Time.deltaTime);
         lastMove = move;
     }
 
-    void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if (characterController.isGrounded || hit.normal.y > 0.1f) return;
-        if (!Input.GetKeyDown(KeyCode.Space)) return;
-        if (hit.transform.CompareTag("Slippery")) return;
+    //void OnControllerColliderHit(ControllerColliderHit hit)
+    //{
+    //    if (characterController.isGrounded || hit.normal.y > 0.1f) return;
+    //    if (!Input.GetKeyDown(KeyCode.Space)) return;
+    //    if (hit.transform.CompareTag("Slippery")) return;
 
-        move = hit.normal * 0.6f;
-        verticalSpeed = jumpforce * 1.5f;
-    }
+    //    move = hit.normal * 0.6f;
+    //    verticalSpeed = jumpforce * 1.5f;
+    //}
 }

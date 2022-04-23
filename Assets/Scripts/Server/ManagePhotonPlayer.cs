@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
 
 public class ManagePhotonPlayer : MonoBehaviour
 {
@@ -30,36 +31,44 @@ public class ManagePhotonPlayer : MonoBehaviour
         ghostPlayerLayer = LayerMask.NameToLayer("GhostPlayer");
         otherGhostPlayerLayer = LayerMask.NameToLayer("OtherGhostPlayer");
 
-        List<StartTimeline> startTimelines = LevelData.ReadStartTimeline();
-        StartTimeline startTimeline = startTimelines[GameManager.GetCurrentScene() - 1];
-        if (GameManager.hostJoin == GameManager.HostJoin.Host) TimelineManager.Instance.SetTimeline(startTimeline.p0);
-        else TimelineManager.Instance.SetTimeline(startTimeline.p1);
-
         ConvertToOtherPlayer(!photonView.IsMine);
     }
 
     void ConvertToOtherPlayer(bool isOtherPlayer)
     {
-        if (isOtherPlayer)
-        {
-            //Other player
-            SetLayerRecursively(gameObject, otherPlayerLayer); //Player Layer
-            cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToPlayer")); //Culling Mask
-        }
-        else
-        {
-            //Current player
-            GameManager.photonPlayer = photonView.Owner;
-
-            SetLayerRecursively(gameObject, playerLayer); //Player Layer
-            cam.cullingMask |= (1 << LayerMask.NameToLayer("ItemInvisibleToOther")); //Culling Mask
-            GameManager.hud = transform.GetComponentInChildren<HUD>();
-        }
 
         //Turn off the extra components
         foreach (Behaviour component in components) component.enabled = !isOtherPlayer;
         //Turn off the extra gameobjects
         foreach (GameObject gameObject in gameObjects) gameObject.SetActive(!isOtherPlayer);
+
+        if (isOtherPlayer)
+        {
+            //Other player
+            gameObject.name = "OtherPlayer"; //GameObject name
+            SetLayerRecursively(gameObject, otherPlayerLayer); //Layer
+        }
+        else
+        {
+            //Current player
+            GameManager.photonPlayer = photonView.Owner;
+            GameManager.player = gameObject;
+
+            gameObject.name = "Player"; //GameObject name
+            SetLayerRecursively(gameObject, playerLayer); //Layer
+            GameManager.hud = transform.GetComponentInChildren<HUD>(); //HUD
+
+            //Invoke OnPlayerSpawned
+            StartCoroutine(PlayersReceivedOthersCurrentTimeline(delegate {
+                var onPlayersSpawnedInterfaces = FindObjectsOfType<MonoBehaviour>().OfType<IOnPlayersSpawned>();
+                foreach (IOnPlayersSpawned onPlayersSpawned in onPlayersSpawnedInterfaces)
+                {
+                    onPlayersSpawned.OnPlayersSpawned();
+                }
+
+                photonView.RPC("SetColorTransparent", RpcTarget.All, TimelineManager.CurrentTimeline != TimelineManager.CurrentTimelineOtherPlayer);
+            }));
+        }
     }
 
     [PunRPC]
@@ -84,15 +93,26 @@ public class ManagePhotonPlayer : MonoBehaviour
             if (gameObject.layer == ghostPlayerLayer) SetLayerRecursively(gameObject, playerLayer);
             if (gameObject.layer == otherGhostPlayerLayer) SetLayerRecursively(gameObject, otherPlayerLayer);
         }
+
         body.material.SetColor("_BaseColor", c);
     }
 
     void SetLayerRecursively(GameObject obj, int newLayer)
     {
-        if ((~LayerMask.GetMask("Item", "ItemInvisibleToPlayer", "ItemInvisibleToOther", "ItemInvisibleToBothPlayers") & (1 << obj.layer)) != 0) return;
+        if ((LayerMask.GetMask("ItemPlayer", "ItemOtherPlayer", "ItemBothPlayers", "ItemNeitherPlayers") & (1 << obj.layer)) != 0) return;
 
         obj.layer = newLayer;
 
         foreach (Transform child in obj.transform) SetLayerRecursively(child.gameObject, newLayer);
+    }
+
+    IEnumerator PlayersReceivedOthersCurrentTimeline(UnityEngine.Events.UnityAction action)
+    {
+        while (TimelineManager.CurrentTimeline == -1 || TimelineManager.CurrentTimelineOtherPlayer == -1)
+        {
+            yield return null;
+        }
+
+        action.Invoke();
     }
 }

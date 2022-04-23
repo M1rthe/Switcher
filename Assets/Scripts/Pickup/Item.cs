@@ -44,12 +44,14 @@ public class Item : MonoBehaviour
     }
 
     //Layers
-    LayerMask itemLayer;
-    LayerMask itemInvisibleToPlayerLayer;
-    LayerMask itemInvisibleToOtherLayer;
-    LayerMask itemInvisibleToBothPlayersLayer;
+    LayerMask itemPlayerLayer;
+    LayerMask itemOtherPlayerLayer;
+    LayerMask itemBothPlayersLayer;
+    LayerMask itemNeitherPlayersLayer;
 
-    void Start()
+    protected Camera cam;
+
+    public virtual void Start()
     {
         PhotonView = GetComponent<PhotonView>();
 
@@ -57,11 +59,10 @@ public class Item : MonoBehaviour
         startTimeline = GetComponentInParent<Timeline>().transform.GetSiblingIndex();
 
         //Get layers
-        itemLayer = LayerMask.NameToLayer("Item");
-        itemInvisibleToPlayerLayer = LayerMask.NameToLayer("ItemInvisibleToPlayer");
-        itemInvisibleToOtherLayer = LayerMask.NameToLayer("ItemInvisibleToOther");
-        itemInvisibleToBothPlayersLayer = LayerMask.NameToLayer("ItemInvisibleToBothPlayers");
-        SetLayerRecursively(gameObject, itemLayer); //Set layer
+        itemPlayerLayer = LayerMask.NameToLayer("ItemPlayer");
+        itemOtherPlayerLayer = LayerMask.NameToLayer("ItemOtherPlayer");
+        itemBothPlayersLayer = LayerMask.NameToLayer("ItemBothPlayers");
+        itemNeitherPlayersLayer = LayerMask.NameToLayer("ItemNeitherPlayers");
 
         //Parent
         startParent = transform.parent; //Get Parent
@@ -76,6 +77,22 @@ public class Item : MonoBehaviour
         gameObject.tag = "Item";
     }
 
+    public virtual void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (inHand)
+            {
+                //Raycast check
+                RaycastHit hit;
+                if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit, 2f, ~LayerMask.GetMask("IgnorePlayer")))
+                {
+                    Use(hit.transform.gameObject);
+                }
+            }
+        }
+    }
+
     public void RequestOwnership(Photon.Realtime.Player photonPlayer)
     {
         photonView.TransferOwnership(photonPlayer);
@@ -86,56 +103,72 @@ public class Item : MonoBehaviour
     {
         startTimeline = timeline;
         startParent = TimelineManager.Timelines[timeline].transform;
+
+        StartTimelineSwitched();
     }
 
     [PunRPC]
     public void UpdateLayer()
     {
-        bool invisibleToPlayer = StartTimeline != TimelineManager.CurrentTimeline;
-        bool invisibleToOtherPlayer = StartTimeline != TimelineManager.CurrentTimelineOtherPlayer;
+        bool onPlayerTimeline = StartTimeline == TimelineManager.CurrentTimeline;
+        bool onOtherPlayerTimeline = StartTimeline == TimelineManager.CurrentTimelineOtherPlayer;
 
-        SetColorTransparent(false);
-
-        if (invisibleToPlayer) //Invisble to player
+        if (onPlayerTimeline && onOtherPlayerTimeline)
         {
             if (type == Type.CurrentTL)
             {
-                SetLayerRecursively(gameObject, itemInvisibleToOtherLayer);
-                SetColorTransparent(true);
+                SetLayerRecursively(gameObject, itemBothPlayersLayer);
             }
             if (type == Type.OnlyCurrentTL)
             {
-                SetLayerRecursively(gameObject, itemInvisibleToPlayerLayer);
+                SetLayerRecursively(gameObject, itemBothPlayersLayer);
             }
+
+            return;
         }
 
-        if (invisibleToOtherPlayer) //Invisible to other player
+        if (!onPlayerTimeline && !onOtherPlayerTimeline) //Visible to both
         {
-            SetLayerRecursively(gameObject, itemInvisibleToOtherLayer);
+            SetLayerRecursively(gameObject, itemNeitherPlayersLayer);
+            return;
         }
 
-        if (invisibleToPlayer && invisibleToOtherPlayer) //Invisble to both
+        if (onPlayerTimeline) //Invisble to player
         {
             if (type == Type.CurrentTL)
             {
-                SetLayerRecursively(gameObject, itemLayer);
-                SetColorTransparent(true);
+                SetLayerRecursively(gameObject, itemPlayerLayer);
             }
             if (type == Type.OnlyCurrentTL)
             {
-                SetLayerRecursively(gameObject, itemInvisibleToBothPlayersLayer);
+                SetLayerRecursively(gameObject, itemPlayerLayer);
             }
+
+            return;
         }
 
-        if (!invisibleToPlayer && !invisibleToOtherPlayer) //Visible to both
+        if (onOtherPlayerTimeline) //Invisible to other player
         {
-            SetLayerRecursively(gameObject, itemLayer);
+            SetLayerRecursively(gameObject, itemOtherPlayerLayer);
+
+            return;
         }
+    }
+
+    public virtual void Use(GameObject go)
+    {
+
+    }
+
+    public virtual void StartTimelineSwitched()
+    {
+
     }
 
     public virtual void OnPickup()
     {
         inHand = true;
+        cam = GameManager.GetComponentInParentRecursively(gameObject, typeof(Camera)) as Camera;
     }
 
     public virtual void OnDrop()
@@ -143,16 +176,19 @@ public class Item : MonoBehaviour
         inHand = false;
     }
 
-    public void SetColorTransparent(bool enable)
-    {
-        foreach (MeshRenderer meshRenderer in meshRenderers)
-        {
-            Color c = meshRenderer.material.GetColor("_BaseColor");
-            if (enable) c.a = 0.25f;
-            else c.a = 1f;
-            meshRenderer.material.SetColor("_BaseColor", c);
-        }
-    }
+    //public void SetColorTransparent(bool enable)
+    //{
+    //    foreach (MeshRenderer meshRenderer in meshRenderers)
+    //    {
+    //        foreach (Material material in meshRenderer.materials)
+    //        {
+    //            Color c = material.GetColor("_BaseColor");
+    //            if (enable) c.a = 0.25f;
+    //            else c.a = 1f;
+    //            material.SetColor("_BaseColor", c);
+    //        }
+    //    }
+    //}
 
     void SetLayerRecursively(GameObject obj, int newLayer)
     {
