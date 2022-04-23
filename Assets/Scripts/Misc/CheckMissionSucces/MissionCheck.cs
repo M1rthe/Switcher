@@ -5,28 +5,19 @@ using UnityEngine.UI;
 using Photon.Pun;
 using UnityEngine.Events;
 
-public class MissionCheck : MonoBehaviour, IOnPlayersSpawned
+public class MissionCheck : MonoBehaviour
 {
     [SerializeField] protected float timeLimit = 300;
     [SerializeField] protected int maxSwitches = 8;
 
-    protected float timePassed;
     protected static int timesSwitched;
-
-    WinScreen winScreen;
 
     protected PhotonView photonView;
 
-    void Start()
+    public virtual void Start()
     {
-        timePassed = 0;
         timesSwitched = 0;
         photonView = GetComponent<PhotonView>();   
-    }
-
-    void Update()
-    {
-        timePassed += Time.deltaTime;
     }
 
     public virtual void Switched()
@@ -45,9 +36,9 @@ public class MissionCheck : MonoBehaviour, IOnPlayersSpawned
         }; 
         LevelData.SaveLevelProgress(GameManager.GetCurrentScene() - 1, levelProgress);
 
-        winScreen.gameObject.SetActive(true);
-        winScreen.SetText("Time: "+ timePassed.ToString("F2") + "s / "+timeLimit+"s", "Times Switched: "+ timesSwitched + "x / "+maxSwitches+"x");
-        winScreen.SetLevelProgress(levelProgress);
+        GameManager.hud.winScreen.gameObject.SetActive(true);
+        GameManager.hud.winScreen.SetText("Time: "+ timePassed.ToString("F2") + "s / "+timeLimit+"s", "Times Switched: "+ timesSwitched + "x / "+maxSwitches+"x");
+        GameManager.hud.winScreen.SetLevelProgress(levelProgress);
 
         StartCoroutine(DisplayWinMessage(delegate{
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
@@ -58,13 +49,7 @@ public class MissionCheck : MonoBehaviour, IOnPlayersSpawned
     {
         yield return new WaitForSeconds(5);
 
-        winScreen.gameObject.SetActive(false);
+        GameManager.hud.winScreen.gameObject.SetActive(false);
         unityAction.Invoke();
-    }
-
-    public void OnPlayersSpawned()
-    {
-        winScreen = GameManager.FindObjectOfType<WinScreen>();
-        winScreen.gameObject.SetActive(false);
     }
 }

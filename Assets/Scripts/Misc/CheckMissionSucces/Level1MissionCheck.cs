@@ -13,7 +13,7 @@ public class Level1MissionCheck : MissionCheck
         {
             if (other.transform.gameObject == cat)
             {
-                base.photonView.RPC("Succes", RpcTarget.All, timePassed, timesSwitched);
+                base.photonView.RPC("Succes", RpcTarget.All, Time.timeSinceLevelLoad, timesSwitched);
             }
         }
     }
